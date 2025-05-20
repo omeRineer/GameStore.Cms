@@ -1,0 +1,144 @@
+﻿@*@inherits BaseDialog
+
+@inject SliderContentService SliderContentService
+@inject TypeLookupODataService TypeLookupODataService
+
+@if (UpdateModel != null)
+{
+    <EditForm Model="UpdateModel" OnValidSubmit="SaveAsync">
+        <DataAnnotationsValidator />
+
+        <RadzenStack class="mb-3">
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <RadzenLabel Text="Slider Türü:" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenDropDown Data="sliderTypes"
+                                    TValue="int"
+                                    @bind-Value="UpdateModel.SliderTypeId"
+                                    TextProperty="Value"
+                                    ValueProperty="Key"
+                                    class="w-100" />
+                    <ValidationMessage For="() => UpdateModel.SliderTypeId" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <RadzenLabel Text="Başlık:" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenTextBox class="w-100" @bind-Value="UpdateModel.Header" />
+                    <ValidationMessage For="() => UpdateModel.Header" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <RadzenLabel Text="Link:" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenTextBox class="w-100" @bind-Value="UpdateModel.To" />
+                    <ValidationMessage For="() => UpdateModel.To" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3 align-items-center d-flex">
+                    <RadzenLabel Text="Resim:" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
+                    @if (UpdateModel.Image != null)
+                    {
+                        <RadzenLink Icon="preview" Target="_blank" Path="@($"{Configuration.CoreConfiguration.StorageAPIPath}{UpdateModel.Image.Path}")" />
+                        <RadzenLabel Text="@UpdateModel.Image.Name" />
+                    }
+                    <ValidationMessage For="() => UpdateModel.Image" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <RadzenLabel Text="Öncelik Sırası:" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenNumeric Min="0" class="w-100" @bind-Value="UpdateModel.Priority" />
+                    <ValidationMessage For="() => UpdateModel.Priority" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <RadzenLabel Text="Aktif mi ?" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenCheckBox @bind-Value="UpdateModel.IsActive" />
+                    <ValidationMessage For="() => UpdateModel.IsActive" />
+                </div>
+            </div>
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.End">
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+            <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+        </RadzenStack>
+
+
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid SliderContentId { get; set; }
+    UpdateSliderContentModel UpdateModel;
+    Dictionary<int, string> sliderTypes;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        sliderTypes = (await TypeLookupODataService.GetListAsync(new ODataRequestParams
+        {
+            Select = "Id,Description",
+            Filter = $"ProcessGroupId eq {(int)ProcessGroupEnum.SliderType}"
+        })).Value.ToDictionary(k => k.Id, v => v.Description);
+
+        var result = await SliderContentService.GetAsync(SliderContentId);
+
+        if (result.Data?.Data == null)
+        {
+            NotificationService.Error("Slider içeriği bulunamadı!");
+            return;
+        }
+
+        UpdateModel = Mapper.Map<UpdateSliderContentModel>(result.Data.Data);
+
+    }
+
+    private async Task OpenFileDialogAsync()
+    {
+        var result = await DialogService.OpenAsync<MediaDialog<File>>("Resim Seç",
+            new Dictionary<string, object> { { "Node", "slider-content-images" } },
+            new DialogOptions { Width = "800px" });
+
+        if (result != null)
+            UpdateModel.Image = result as File;
+    }
+
+    private async Task SaveAsync()
+    {
+        IsLoading = true;
+
+        var result = await SliderContentService.UpdateAsync(UpdateModel);
+
+        if (!result.IsSuccessful)
+            NotificationService.Error(result.ErrorMessage);
+        else
+        {
+            NotificationService.Success("Slider içeriği güncellendi.");
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+}*@

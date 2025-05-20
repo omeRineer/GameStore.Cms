@@ -1,0 +1,59 @@
+﻿
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+@inject AutoMapper.IMapper Mapper
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject ILocalStorageService LocalStorageService
+@inject CurrentUserService CurrentUserService
+
+
+@using Extensions
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Authorization
+@using Radzen
+@using Radzen.Blazor
+@using Shared.Components
+@using Blazored.LocalStorage;
+
+@using GameStore.Cms.Providers
+@using GameStore.Cms
+@using GameStore.Cms.Shared
+
+@using GameStore.Cms.Pages.Base
+@using GameStore.Cms.Pages.Auth
+
+@using GameStore.Cms.Services.OData
+@using GameStore.Cms.Services.OData.Identity
+@using GameStore.Cms.Services.Base
+@using GameStore.Cms.Services.Master
+@using GameStore.Cms.Services.Master.Identity
+@using GameStore.Cms.Services.Internal
+
+@using GameStore.Cms.Models.Blog
+@using GameStore.Cms.Models.Auth
+@using GameStore.Cms.Models.SliderContent
+@using GameStore.Cms.Models.Category
+@using GameStore.Cms.Models.Setting
+@using GameStore.Cms.Models.External
+@using GameStore.Cms.Models.Identity
+@using GameStore.Cms.Models.Identity.User
+@using GameStore.Cms.Models.Common
+@using GameStore.Cms.Models.Game
+@using GameStore.Cms.Models.Enums
+@using GameStore.Cms.Models.OData
+@using GameStore.Cms.Models.OData.Identity
+@using BaseModel = GameStore.Cms.Models.Inputs
+
+
+

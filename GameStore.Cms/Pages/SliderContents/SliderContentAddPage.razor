@@ -1,0 +1,128 @@
+﻿@*@inherits BaseDialog
+
+@inject SliderContentService SliderContentService
+@inject TypeLookupODataService TypeLookupODataService
+
+<EditForm Model="newSliderContent" OnValidSubmit="SaveAsync">
+    <DataAnnotationsValidator />
+
+    <RadzenStack class="mb-3">
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <RadzenLabel Text="Slider Türü:" />
+            </div>
+            <div class="col-md-9">
+                <RadzenDropDown Data="sliderTypes"
+                                Placeholder="Seçiniz"
+                                TValue="int"
+                                @bind-Value="newSliderContent.SliderTypeId"
+                                TextProperty="Value"
+                                ValueProperty="Key"
+                                class="w-100" />
+                <ValidationMessage For="() => newSliderContent.SliderTypeId" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <RadzenLabel Text="Başlık:" />
+            </div>
+            <div class="col-md-9">
+                <RadzenTextBox class="w-100" @bind-Value="newSliderContent.Header" />
+                <ValidationMessage For="() => newSliderContent.Header" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <RadzenLabel Text="Link:" />
+            </div>
+            <div class="col-md-9">
+                <RadzenTextBox class="w-100" @bind-Value="newSliderContent.To" />
+                <ValidationMessage For="() => newSliderContent.To" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <RadzenLabel Text="Resim:" />
+            </div>
+            <div class="col-md-9">
+                <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
+                @if (newSliderContent.Image != null)
+                {
+                    <RadzenLink Icon="preview" Target="_blank" Path="@($"{Configuration.CoreConfiguration.StorageAPIPath}{newSliderContent.Image.Path}")" />
+                    <RadzenLabel Text="@newSliderContent.Image.Name" />
+                }
+                <ValidationMessage For="() => newSliderContent.Image" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <RadzenLabel Text="Öncelik Sırası:" />
+            </div>
+            <div class="col-md-9">
+                <RadzenNumeric Min="0" class="w-100" @bind-Value="newSliderContent.Priority" />
+                <ValidationMessage For="() => newSliderContent.Priority" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <RadzenLabel Text="Aktif mi ?" />
+            </div>
+            <div class="col-md-9">
+                <RadzenCheckBox @bind-Value="newSliderContent.IsActive" />
+                <ValidationMessage For="() => newSliderContent.IsActive" />
+            </div>
+        </div>
+    </RadzenStack>
+
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.End">
+        <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+        <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+    </RadzenStack>
+
+</EditForm>
+
+@code {
+    CreateSliderContentModel newSliderContent = new CreateSliderContentModel();
+    Dictionary<int, string> sliderTypes;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        sliderTypes = (await TypeLookupODataService.GetListAsync(new ODataRequestParams
+        {
+            Select = "Id,Description",
+            Filter = $"ProcessGroupId eq {(int)ProcessGroupEnum.SliderType}"
+        })).Value.ToDictionary(k => k.Id, v => v.Description);
+    }
+
+    private async Task OpenFileDialogAsync()
+    {
+        var result = await DialogService.OpenAsync<MediaDialog<File>>("Resim Seç",
+            new Dictionary<string, object> { { "Node", "slider-content-images" } },
+            new DialogOptions { Width = "800px" });
+
+        if (result != null)
+            newSliderContent.Image = result as File;
+    }
+
+    async Task SaveAsync()
+    {
+        IsLoading = true;
+        var result = await SliderContentService.CreateAsync(newSliderContent);
+
+        if (!result.IsSuccessful)
+            NotificationService.Error(result.ErrorMessage);
+        else
+        {
+            NotificationService.Success("Slider içeriği oluşturuldu.");
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+}*@

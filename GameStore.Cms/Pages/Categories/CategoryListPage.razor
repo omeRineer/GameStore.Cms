@@ -1,0 +1,101 @@
+﻿@page "/categories"
+
+@inherits BaseDataPage<ODataCategory>
+@inject CategoryODataService CategoryODataService
+@inject CategoryService CategoryService
+
+<div class="row">
+    <div class="col-xl-3">
+        <RadzenButton Icon="refresh" Click=@Refresh />
+        <RadzenButton Icon="add" Bu Click=@(async args => await DialogService.OpenAsync<CategoryAddPage>("Yeni Kategori", null, new DialogOptions { Width = "600px" })) />
+
+        @if (SelectedItem != null)
+        {
+            <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<CategoryUpdatePage>("Kategori Düzenle",
+                      new Dictionary<string, object> { { "CategoryId", SelectedItem.Id } },
+                      new DialogOptions { Width = "600px" })) />
+
+            <RadzenButton Icon="remove" Click=@DeleteAsync />
+        }
+    </div>
+</div>
+
+
+
+<BaseDataGrid TItem="ODataCategory"
+              IsLoading="IsLoading"
+              Data="Data"
+              @bind-SelectedItem="@SelectedItem"
+              LoadData="LoadData"
+              Count="Count"
+              Columns=@(new Dictionary<string, string>
+              {
+              { "Name", "Kategori Adı" },
+              { "CreateDate", "Oluşturulma Tarihi" },
+              { "EditDate", "Son Güncellenme Tarihi" }
+              }) />
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await CurrentUserService.GetCurrentUserAsync();
+    }
+
+    async Task LoadData(LoadDataArgs args)
+    {
+        IsLoading = true;
+        LastArgs = args;
+
+        var result = await CategoryODataService.GetListAsync(new ODataRequestParams
+        {
+            Count = true,
+            Filter = args.Filter,
+            OrderBy = args.OrderBy,
+            Skip = args.Skip,
+            Top = args.Top
+        });
+
+        Data = result.Value.AsODataEnumerable();
+        Count = result.Count;
+
+        StateHasChanged();
+        IsLoading = false;
+    }
+
+    private async void DeleteAsync()
+    {
+        var isConfirm = await DialogService.Confirm("Silmek istediğinize emin misiniz?", "Uyarı", new ConfirmOptions { OkButtonText = "Evet", CancelButtonText = "Hayır" });
+        if (isConfirm != true)
+            return;
+
+        IsLoading = true;
+
+        var result = await CategoryService.DeleteAsync(((ODataCategory)SelectedItem).Id);
+        if (!result.IsSuccessful)
+            NotificationService.Error(result.ErrorMessage);
+        else
+        {
+            NotificationService.Success("Kategori bilgisi silindi.");
+            DialogService.Close(true);
+            Refresh();
+        }
+
+        IsLoading = false;
+    }
+
+    protected async override void Close(dynamic result)
+    {
+        if (result == true)
+        {
+            await LoadData(LastArgs);
+            StateHasChanged();
+        }
+    }
+
+    protected async override void Refresh()
+    {
+        base.Refresh();
+        await LoadData(LastArgs);
+        StateHasChanged();
+    }
+}

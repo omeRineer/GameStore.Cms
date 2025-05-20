@@ -1,0 +1,170 @@
+﻿@inherits BaseDialog
+@inject UserService UserService
+@inject RoleODataService RoleODataService
+@inject PermissionODataService PermissionODataService
+
+<EditForm Model="newUser" OnValidSubmit="SaveAsync">
+    <DataAnnotationsValidator />
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="İsim:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenTextBox class="w-100" @bind-Value="newUser.FirstName" />
+            <ValidationMessage For="() => newUser.FirstName" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="Soy İsim:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenTextBox class="w-100" @bind-Value="newUser.LastName" />
+            <ValidationMessage For="() => newUser.LastName" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="Telefon:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenTextBox MaxLength="11" class="w-100" @bind-Value="newUser.Phone" />
+            <ValidationMessage For="() => newUser.Phone" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="Email:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenTextBox class="w-100" @bind-Value="newUser.Email" />
+            <ValidationMessage For="() => newUser.Email" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="Kullanıcı Adı:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenTextBox class="w-100" @bind-Value="newUser.UserName" />
+            <ValidationMessage For="() => newUser.UserName" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="Parola:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenTextBox class="w-100" @bind-Value="newUser.Password" />
+            <ValidationMessage For="() => newUser.Password" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="Doğum Tarihi:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenDatePicker class="w-100" @bind-Value="newUser.BirthdayDate" />
+            <ValidationMessage For="() => newUser.BirthdayDate" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="Rol:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenListBox @bind-Value=@newUser.Roles
+                           Data=@roles
+                           TextProperty="Name"
+                           ValueProperty="Id"
+                           Multiple=true
+                           AllowClear=true
+                           Placeholder="Tümünü Seç"
+                           Style="width: 100%; height: 200px" />
+            <ValidationMessage For="() => newUser.Roles" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2 align-items-center d-flex">
+            <RadzenLabel Text="İzinler:" />
+        </div>
+        <div class="col-md-10">
+            <RadzenListBox @bind-Value=@newUser.Permissions
+                           Data=@permissions
+                           TextProperty="Name"
+                           ValueProperty="Id"
+                           Multiple=true
+                           AllowClear=true
+                           Placeholder="Tümünü Seç"
+                           Style="width: 100%; height: 200px" />
+            <ValidationMessage For="() => newUser.Permissions" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+            <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    CreateUserModel newUser = new CreateUserModel();
+    List<ODataRole>? roles;
+    List<ODataPermission>? permissions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getRolesResult = await RoleODataService.GetListAsync(new ODataRequestParams
+        {
+            Select = "Id,Name"
+        });
+        roles = getRolesResult.Value.ToList();
+
+        var getPermissionsResult = await PermissionODataService.GetListAsync(new ODataRequestParams
+        {
+            Select = "Id,Name"
+        });
+        permissions = getPermissionsResult.Value.ToList();
+
+    }
+
+    private async Task SaveAsync()
+    {
+        IsLoading = true;
+
+        var result = await UserService.CreateAsync(newUser);
+
+        if (!result.IsSuccessStatusCode)
+            NotificationService.Error(result.ErrorMessage);
+        else
+        {
+            NotificationService.Success("Kullanıcı oluşturuldu");
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+
+    private async Task OpenFileDialogAsync()
+    {
+        //var result = await DialogService.OpenAsync<MediaDialog<File>>("Resim Seç",
+        //    new Dictionary<string, object> { { "Node", "game-cover-images" } },
+        //    new DialogOptions { Width = "800px" });
+
+        //if (result != null)
+        //    newBlog.CoverImage = result as File;
+    }
+}
+

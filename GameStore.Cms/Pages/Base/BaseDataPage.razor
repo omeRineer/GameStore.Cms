@@ -1,0 +1,40 @@
+﻿@implements IDisposable
+@inherits Page
+@typeparam TData
+
+@code {
+
+    protected IEnumerable<TData> Data;
+    public TData SelectedItem;
+    protected LoadDataArgs LastArgs;
+    protected int Count;
+
+    
+
+    protected override void OnInitialized()
+    {
+        DialogService.OnOpen += Open;
+        DialogService.OnClose += Close;
+    }
+
+    void IDisposable.Dispose()
+    {
+        DialogService.OnOpen -= Open;
+        DialogService.OnClose -= Close;
+    }
+
+    protected virtual async void Open(string title, Type type, Dictionary<string, object> parameters, DialogOptions options)
+    {
+
+    }
+
+    protected virtual async void Close(dynamic result)
+    {
+
+    }
+
+    protected virtual async void Refresh()
+    {
+        SelectedItem = default(TData);
+    }
+}

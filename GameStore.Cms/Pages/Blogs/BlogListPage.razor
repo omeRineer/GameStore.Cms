@@ -1,0 +1,103 @@
+﻿@page "/blogs"
+@attribute [Authorize(Roles = "SuperAdmin")]
+
+@inherits BaseDataPage<ODataBlog>
+@inject BlogODataService BlogODataService
+@inject BlogService BlogService
+
+<div class="row">
+    <div class="col-xl-3">
+        <RadzenButton Icon="add" Click=@(async args => await DialogService.OpenAsync<BlogAddPage>("Yeni Blog",
+                      null,
+                      new DialogOptions{Width = "1000px"} )) />
+
+        @if (SelectedItem != null)
+        {
+            <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<BlogUpdatePage>("Blog Düzenle",
+                      new Dictionary<string, object> { { "BlogId", SelectedItem.Id } },
+                      new DialogOptions{Width = "1000px"})) />
+            <RadzenButton Icon="remove" Click=@DeleteAsync />
+        }
+
+        <RadzenButton Icon="refresh" Click=@Refresh />
+    </div>
+</div>
+
+
+
+<BaseDataGrid TItem="ODataBlog"
+              IsLoading="IsLoading"
+              Data="Data"
+              @bind-SelectedItem="@SelectedItem"
+              LoadData="LoadData"
+              Count="Count"
+              Columns=@(new Dictionary<string, string>
+              {
+              { "Header", "Başlık" },
+              { "ReaderCount", "Okunma Sayısı" },
+              { "CreateDate", "Oluşturulma Tarihi" },
+              { "EditDate", "Son Güncellenme Tarihi" },
+              { "Status", "Yayın Durumu" }
+              }) />
+
+@code {
+
+    async Task LoadData(LoadDataArgs args)
+    {
+        IsLoading = true;
+        LastArgs = args;
+
+        var result = await BlogODataService.GetListAsync(new ODataRequestParams
+        {
+            Count = true,
+            Filter = args.Filter,
+            OrderBy = args.OrderBy,
+            Skip = args.Skip,
+            Top = args.Top
+        });
+
+        Data = result.Value.AsODataEnumerable();
+        Count = result.Count;
+
+        StateHasChanged();
+        IsLoading = false;
+    }
+
+    private async void DeleteAsync()
+    {
+        var isConfirm = await DialogService.Confirm("Silmek istediğinize emin misiniz?", "Uyarı", new ConfirmOptions { OkButtonText = "Evet", CancelButtonText = "Hayır" });
+        if (isConfirm != true)
+            return;
+
+        IsLoading = true;
+
+        var result = await BlogService.DeleteAsync(((ODataBlog)SelectedItem).Id);
+        if (!result.IsSuccessful)
+            NotificationService.Error(result.ErrorMessage);
+        else
+        {
+            NotificationService.Success("Blog içeriği silindi.");
+            DialogService.Close(true);
+            Refresh();
+        }
+
+        IsLoading = false;
+    }
+
+    protected async override void Close(dynamic result)
+    {
+        if (result is bool val && val == true)
+        {
+            await LoadData(LastArgs);
+            StateHasChanged();
+        }
+    }
+
+    protected async override void Refresh()
+    {
+        base.Refresh();
+        await LoadData(LastArgs);
+        StateHasChanged();
+    }
+
+}

@@ -1,0 +1,50 @@
+﻿@inject MenuODataService MenuODataService
+
+<RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenPanelMenu>
+        @if (menuItems != null && menuItems.Count() > 0)
+        {
+            @foreach (var menuItem in menuItems.Where(f => f.ParentMenuId == null).OrderBy(o => o.Priority).ToList())
+            {
+                <RadzenPanelMenuItem Text="@($"{menuItem.Code} {menuItem.Title}")"
+                                     Icon="@menuItem.Icon"
+                                     Click=@(args=> { Navigate(menuItem); })>
+
+                    @if (menuItems.Any(e => e.ParentMenuId == menuItem.Id))
+                    {
+                        @foreach (var childMenuItem in menuItems.Where(f => f.ParentMenuId == menuItem.Id).OrderBy(o => o.Priority).ToList())
+                        {
+                            <RadzenPanelMenuItem Click=@(args=> { Navigate(childMenuItem); })
+                                                 Text="@($"{childMenuItem.Code} {childMenuItem.Title}")"
+                                                 Icon="@childMenuItem.Icon"></RadzenPanelMenuItem>
+                        }
+                    }
+
+                </RadzenPanelMenuItem>
+            }
+        }
+    </RadzenPanelMenu>
+</RadzenSidebar>
+
+@code {
+    bool sidebar1Expanded = true;
+    IEnumerable<ODataMenu> menuItems;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = await MenuODataService.GetListAsync(new ODataRequestParams
+            {
+                Expand = "ParentMenu"
+            });
+
+        menuItems = result.Value.AsODataEnumerable();
+    }
+
+    private void Navigate(ODataMenu menuItem)
+    {
+        if (!string.IsNullOrEmpty(menuItem.Path))
+        {
+            NavigationManager.NavigateTo(menuItem.Path);
+        }
+    }
+}

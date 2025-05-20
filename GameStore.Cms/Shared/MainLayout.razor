@@ -1,0 +1,43 @@
+﻿@inherits LayoutComponentBase
+
+<RadzenComponents />
+<RadzenLayout>
+
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%; padding: 0 1rem;">
+
+            <RadzenSidebarToggle />
+            <RadzenLabel Text="Game Store Content Management System" Style="font-weight: bold;" />
+            @if (User != null && User.IsAuthenticated)
+            {
+                <RadzenButton Icon="logout" Text="Logout" ButtonStyle="ButtonStyle.Light" Click="@(async c=> await LogoutAsync())" />
+            }
+
+        </RadzenStack>
+    </RadzenHeader>
+
+    <GameStore.Cms.Shared.Components.MenuList />
+
+    <RadzenBody>
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+</RadzenLayout>
+
+@code
+{
+    CurrentUser User;
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await CurrentUserService.GetCurrentUserAsync();
+    }
+
+    async Task LogoutAsync()
+    {
+        await CurrentUserService.LogoutAsync();
+
+        NavigationManager.NavigateTo("/login", true);
+    }
+}

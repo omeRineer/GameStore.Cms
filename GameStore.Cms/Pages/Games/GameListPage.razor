@@ -1,0 +1,105 @@
+﻿@page "/games"
+
+@inherits BaseDataPage<ODataGame>
+
+@inject GameODataService GameODataService
+@inject GameService GameService
+
+<div class="row">
+    <div class="col-xl-3">
+        <RadzenButton Icon="add" Click=@(async args => await DialogService.OpenAsync<GameAddPage>("Yeni Oyun",
+                                           null,
+                                           new DialogOptions{Width = "800px"} )) />
+        <RadzenButton Icon="refresh" Click=@Refresh />
+
+        @if (SelectedItem != null)
+        {
+            <RadzenButton Icon="collections" Click=@(async args => await DialogService.OpenAsync<GameGalleryPage>("Galeri",
+                      new Dictionary<string, object> { { "GameId", SelectedItem.Id } },
+                      new DialogOptions{Width = "800px"} )) />
+            <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<GameUpdatePage>("Oyun Düzenle",
+                                              new Dictionary<string, object> { { "GameId", SelectedItem.Id } },
+                                              new DialogOptions{Width = "800px"})) />
+
+            <RadzenButton Icon="remove" Click=@DeleteAsync />
+        }
+    </div>
+</div>
+
+
+
+<BaseDataGrid TItem="ODataGame"
+              IsLoading="IsLoading"
+              Data="Data"
+              @bind-SelectedItem="@SelectedItem"
+              LoadData="LoadData"
+              Count="Count"
+              Columns=@(new Dictionary<string, string>
+             {
+                 { "Name", "Oyun İsmi" },
+                 { "Category.Name", "Kategori" },
+                 { "ReleaseDate", "Yayınlanma Tarihi" },
+                 { "CreateDate", "Oluşturulma Tarihi" },
+                 { "EditDate", "Son Güncellenme Tarihi" }
+             }) />
+
+@code {
+    async Task LoadData(LoadDataArgs args)
+    {
+        IsLoading = true;
+        LastArgs = args;
+
+        var result = await GameODataService.GetListAsync(new ODataRequestParams
+        {
+            Count = true,
+            Filter = args.Filter,
+            OrderBy = args.OrderBy,
+            Skip = args.Skip,
+            Top = args.Top,
+            Expand = "Category"
+        });
+
+        Data = result.Value.AsODataEnumerable();
+        Count = result.Count;
+
+        StateHasChanged();
+        IsLoading = false;
+    }
+
+    private async void DeleteAsync()
+    {
+        var isConfirm = await DialogService.Confirm("Silmek istediğinize emin misiniz?", "Uyarı", new ConfirmOptions { OkButtonText = "Evet", CancelButtonText = "Hayır" });
+        if (isConfirm != true)
+            return;
+
+        IsLoading = true;
+
+        var result = await GameService.DeleteAsync(((ODataGame)SelectedItem).Id);
+        if (!result.IsSuccessful)
+            NotificationService.Error(result.ErrorMessage);
+        else
+        {
+            NotificationService.Success("Oyun bilgisi silindi.");
+            DialogService.Close(true);
+            Refresh();
+        }
+
+        IsLoading = false;
+    }
+
+    protected async override void Close(dynamic result)
+    {
+        if (result is bool val && val == true)
+        {
+            await LoadData(LastArgs);
+            StateHasChanged();
+        }
+    }
+
+    protected async override void Refresh()
+    {
+        base.Refresh();
+        await LoadData(LastArgs);
+        StateHasChanged();
+    }
+}

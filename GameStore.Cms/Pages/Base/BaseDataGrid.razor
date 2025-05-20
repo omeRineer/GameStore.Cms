@@ -1,0 +1,71 @@
+﻿
+@typeparam TItem
+
+
+<RadzenDataGrid FilterMode="FilterMode.SimpleWithMenu"
+                IsLoading="@IsLoading"
+                AllowColumnResize="true"
+                Count="@Count"
+                Data="@Data"
+                LoadData="@LoadData"
+                SelectionMode="DataGridSelectionMode.Single"
+                RowSelect="@(SelectedItemChanged)"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                AllowSorting="true"
+                AllowFiltering="true"
+                AllowPaging="true"
+                PageSize="10"
+                PagerHorizontalAlign="HorizontalAlign.Right"
+                ShowPagingSummary="true"
+                TItem="TItem"
+                Style="margin-top: 20px;"
+                ColumnWidth="200px">
+    <Columns>
+        @foreach (var column in Columns)
+        {
+
+            <RadzenDataGridColumn TItem="TItem" Title="@column.Value" Property="@column.Key"></RadzenDataGridColumn>
+            @*<RadzenDataGridColumn TItem="TItem" Title="@column.Value">
+                <Template Context="Context">
+                    @GetContextalue(column.Key, Context)
+                </Template>
+            </RadzenDataGridColumn>*@
+        }
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Parameter] public EventCallback<LoadDataArgs> LoadData { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public TItem SelectedItem { get; set; }
+    [Parameter] public int Count { get; set; }
+    [Parameter] public IEnumerable<TItem> Data { get; set; }
+    [Parameter] public Dictionary<string, string> Columns { get; set; }
+    [Parameter] public EventCallback<TItem> SelectedItemChanged { get; set; }
+
+    async Task SelectedItemChange(TItem item)
+    {
+        SelectedItem = item;
+        await SelectedItemChanged.InvokeAsync(SelectedItem);
+    }
+
+    object GetContextalue(string property, TItem Context)
+    {
+        string[] navItems = property.Split('.');
+        var propertyInfo = Context.GetType().GetProperty(navItems[0]);
+
+        switch (propertyInfo)
+        {
+            case IEnumerable<dynamic> Enumerable:
+                {
+                    var item = (object)Enumerable.First();
+                    return item.GetType().GetProperty(navItems[1]).GetValue(item);
+                }
+
+
+            default:
+                return Context?.GetType()?.GetProperty(property)?.GetValue(Context);
+        }
+    }
+
+}
