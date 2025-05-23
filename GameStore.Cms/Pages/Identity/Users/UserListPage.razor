@@ -1,5 +1,5 @@
 ﻿@page "/users"
-@attribute [Authorize(Roles = "SuperAdmin")]
+@attribute [Authorize(Policies.Identity)]
 
 @inherits BaseDataPage<ODataUser>
 @inject UserODataService UserODataService
@@ -9,17 +9,27 @@
     <div class="col-xl-3">
         <RadzenButton Icon="add" Click=@(async args => await DialogService.OpenAsync<UserAddPage>("Yeni Kullanıcı",
                           null,
-                          new DialogOptions{Width = "800px"} )) />
-
-            @*@if (SelectedItem != null)
-            {
-                <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<BlogUpdatePage>("Kullanıcı Düzenle",
-                          new Dictionary<string, object> { { "UserId", SelectedItem.Id } },
-                          new DialogOptions{Width = "1000px"})) />
-                <RadzenButton Icon="remove" Click=@DeleteAsync />
-            }*@
+                          new DialogOptions{Width = "600px"} )) />
 
         <RadzenButton Icon="refresh" Click=@Refresh />
+
+        @if (SelectedItem != null)
+        {
+            <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<UserUpdatePage>("Kullanıcı Düzenle",
+                          new Dictionary<string, object> { { "UserId", SelectedItem.Id } },
+                          new DialogOptions{Width = "600px"})) />
+            <RadzenButton Icon="remove" Click=@DeleteAsync />
+
+            <RadzenButton Icon="key" Click=@(async args => await DialogService.OpenAsync<UserPermissionsPage>(SelectedItem.FirstName,
+                            new Dictionary<string, object> { { "User", SelectedItem } },
+                            new DialogOptions{Width = "700px"})) />
+
+            <RadzenButton Icon="badge" Click=@(async args => await DialogService.OpenAsync<UserRolesPage>(SelectedItem.FirstName,
+                            new Dictionary<string, object> { { "User", SelectedItem } },
+                            new DialogOptions{Width = "700px"})) />
+        }
+
+
     </div>
 </div>
 
@@ -71,11 +81,11 @@
         IsLoading = true;
 
         var result = await UserService.DeleteAsync(((ODataUser)SelectedItem).Id);
-        if (!result.IsSuccessful)
-            NotificationService.Error(result.ErrorMessage);
+        if (!result.Success)
+            NotificationService.Error(result.Message);
         else
         {
-            NotificationService.Success("Kullanıcı silindi.");
+            NotificationService.Success(result.Message);
             DialogService.Close(true);
             Refresh();
         }

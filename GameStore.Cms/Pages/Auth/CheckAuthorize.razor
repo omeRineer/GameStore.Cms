@@ -1,0 +1,12 @@
+﻿
+@code {
+    protected override async void OnInitialized()
+    {
+        var user = await CurrentUserService.GetCurrentUserAsync();
+
+        if (!user.IsAuthenticated)
+            NavigationManager.NavigateTo("/login");
+        else
+            NavigationManager.NavigateTo("/accessdenied");
+    }
+}

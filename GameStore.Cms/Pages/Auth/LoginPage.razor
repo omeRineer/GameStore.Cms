@@ -32,13 +32,13 @@
     {
         var result = await AuthService.LoginAsync(LoginModel);
 
-        if (result.Data.Success != true)
+        if (!result.Success)
         {
-            NotificationService.Error(result.Data?.Message);
+            NotificationService.Error(result.Message);
             return;
         }
 
-        await LocalStorageService.SetItemAsStringAsync("AUTH_TOKEN", result.Data?.Data.Token);
+        await LocalStorageService.SetItemAsStringAsync("AUTH_TOKEN", result.Data?.Token);
 
         await AuthenticationProvider.GetAuthenticationStateAsync();
 

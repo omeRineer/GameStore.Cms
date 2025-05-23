@@ -1,5 +1,5 @@
 ﻿@page "/blogs"
-@attribute [Authorize(Roles = "SuperAdmin")]
+@attribute [Authorize(Policies.Blog)]
 
 @inherits BaseDataPage<ODataBlog>
 @inject BlogODataService BlogODataService
@@ -72,11 +72,11 @@
         IsLoading = true;
 
         var result = await BlogService.DeleteAsync(((ODataBlog)SelectedItem).Id);
-        if (!result.IsSuccessful)
-            NotificationService.Error(result.ErrorMessage);
+        if (!result.Success)
+            NotificationService.Error(result.Message);
         else
         {
-            NotificationService.Success("Blog içeriği silindi.");
+            NotificationService.Success(result.Message);
             DialogService.Close(true);
             Refresh();
         }

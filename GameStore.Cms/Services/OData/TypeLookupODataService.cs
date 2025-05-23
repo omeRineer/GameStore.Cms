@@ -1,5 +1,4 @@
 ﻿using GameStore.Cms.Services.Base;
-using Core.Entities.Concrete.ProcessGroups;
 using Radzen;
 using GameStore.Cms.Models.OData;
 

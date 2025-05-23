@@ -1,8 +1,7 @@
 ﻿using Blazored.LocalStorage;
-using Core.Utilities.RestHelper;
-using Core.Utilities.ResultTool;
-using Core.Utilities.ServiceTools;
 using GameStore.Cms.Models.Identity;
+using GameStore.Cms.Models.Rest;
+using GameStore.Cms.Providers;
 using GameStore.Cms.Services.Internal;
 using RestSharp;
 
@@ -10,38 +9,29 @@ namespace GameStore.Cms.Services.Base
 {
     public class BaseService
     {
-        protected readonly ILocalStorageService LocalStorageService;
+        protected readonly HttpClientService _httpClientService;
         protected readonly string Controller;
         public BaseService(string controller)
         {
             Controller = controller;
-            LocalStorageService = StaticServiceProvider.GetService<ILocalStorageService>();
+            _httpClientService = StaticServiceProvider.GetService<HttpClientService>();
         }
 
-        protected async Task<RestResponse<TModel>> GetAsync<TKey, TModel>(TKey id)
-            => await RestHelper.GetAsync<TModel>(new RestRequestParameter
-            {
-                BaseUrl = $"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/{id}",
-            });
+        public async Task<DataResponseModel<TModel>> GetListAsync<TModel>()
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}");
 
-        protected async Task<RestResponse> CreateAsync<TModel>(TModel entity)
-            => await RestHelper.PostAsync<TModel, object>(new RestRequestParameter
-            {
-                BaseUrl = $"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/create",
-                Authorization = $"Bearer {await LocalStorageService.GetItemAsync<string>("AUTH_TOKEN")}"
-            }, entity);
+        public async Task<DataResponseModel<TModel>> GetAsync<TModel>(object id)
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/{id}");
 
-        protected async Task<RestResponse> DeleteAsync<TKey>(TKey id)
-            => await RestHelper.DeleteAsync(new RestRequestParameter
-            {
-                BaseUrl = $"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/delete/{id}"
-            });
+        public async Task<ResponseModel> CreateAsync(object entity)
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/Create", entity);
 
-        protected async Task<RestResponse> UpdateAsync<TModel>(TModel entity)
-            => await RestHelper.PostAsync<TModel, object>(new RestRequestParameter
-            {
-                BaseUrl = $"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/update"
-            }, entity);
+        public async Task<ResponseModel> DeleteAsync(object id)
+            => await _httpClientService.DeleteAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/Delete/{id}");
+
+        public async Task<ResponseModel> UpdateAsync(object entity)
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/Update", entity);
+
 
     }
 }

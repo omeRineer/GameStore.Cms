@@ -1,0 +1,15 @@
+﻿
+
+<AuthorizeView Policy="@Policy">
+    <Authorized>
+        @ChildContent
+    </Authorized>
+    <NotAuthorized>
+        <p>Yetkisiz Erişim</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public string? Policy { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

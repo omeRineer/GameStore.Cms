@@ -1,5 +1,9 @@
 ﻿using Blazored.LocalStorage;
+using GameStore.Cms.Extensions;
 using GameStore.Cms.Models.Identity;
+using Radzen;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace GameStore.Cms.Services.Internal
@@ -7,40 +11,64 @@ namespace GameStore.Cms.Services.Internal
     public class HttpClientService
     {
         readonly CurrentUserService CurrentUserService;
-        readonly ILocalStorageService LocalStorageService;
-        private readonly HttpClient _httpClient;
+        readonly ISyncLocalStorageService LocalStorageService;
+        readonly HttpClient _httpClient;
+        readonly NotificationService NotificationService;
 
-        public HttpClientService(HttpClient httpClient, ILocalStorageService localStorageService, CurrentUserService currentUserService)
+        public HttpClientService(HttpClient httpClient, ISyncLocalStorageService localStorageService, CurrentUserService currentUserService, NotificationService notificationService)
         {
             _httpClient = httpClient;
             LocalStorageService = localStorageService;
             CurrentUserService = currentUserService;
+            NotificationService = notificationService;
+
+
+            SetHttpClientDefaultParameters("Bearer");
         }
 
         public async Task<TModel> GetAsync<TModel>(string url)
         {
             var response = await _httpClient.GetAsync(url);
 
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<TModel>();
+            if (!response.IsSuccessStatusCode)
+                await Notify(response);
 
-            throw new HttpRequestException($"GET failed: {response.StatusCode}");
+            return await response.Content.ReadFromJsonAsync<TModel>();
         }
 
         public async Task<TModel> PostAsync<TModel>(string url, object data)
         {
             var response = await _httpClient.PostAsJsonAsync(url, data);
 
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<TModel>();
+            if (!response.IsSuccessStatusCode)
+                await Notify(response);
 
-            throw new HttpRequestException($"POST failed: {response.StatusCode}");
+            return await response.Content.ReadFromJsonAsync<TModel>();
         }
 
-        public async Task<bool> DeleteAsync(string url)
+        public async Task<TModel> DeleteAsync<TModel>(string url)
         {
             var response = await _httpClient.DeleteAsync(url);
-            return response.IsSuccessStatusCode;
+
+            if (!response.IsSuccessStatusCode)
+                await Notify(response);
+
+            return await response.Content.ReadFromJsonAsync<TModel>();
+        }
+
+        async Task Notify(HttpResponseMessage response)
+        {
+            var message = await response.Content.ReadAsStringAsync();
+
+            NotificationService.Error($"{(int)response.StatusCode} {response.StatusCode.ToString()}", message);
+
+        }
+        void SetHttpClientDefaultParameters(string scheme)
+        {
+            var token = LocalStorageService.GetItem<string>("AUTH_TOKEN");
+
+            if (!string.IsNullOrEmpty(token))
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme, token);
         }
     }
 }

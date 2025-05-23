@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Cms.Models.Category
+namespace GameStore.Cms.Models.Domain
 {
-    public class SingleCategoryModel
+    public class CategoryModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

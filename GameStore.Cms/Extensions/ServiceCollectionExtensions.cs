@@ -1,11 +1,14 @@
 ﻿using Blazored.LocalStorage;
+using GameStore.Cms.Models.Enums;
 using GameStore.Cms.Models.Identity;
 using GameStore.Cms.Providers;
+using GameStore.Cms.Services.Handlers;
 using GameStore.Cms.Services.Internal;
 using GameStore.Cms.Services.Master;
 using GameStore.Cms.Services.Master.Identity;
 using GameStore.Cms.Services.OData;
 using GameStore.Cms.Services.OData.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
@@ -15,9 +18,20 @@ namespace GameStore.Cms.Extensions
     {
         public static void AddServices(this IServiceCollection services)
         {
-            services.AddAuthorizationCore();
+            services.AddAuthorizationCore(opt =>
+            {
+                opt.AddPolicy(Policies.Blog, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("Blogger,CMS.Components.Blog")));
+                opt.AddPolicy(Policies.Game, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Game")));
+                opt.AddPolicy(Policies.Category, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Category")));
+                opt.AddPolicy(Policies.Identity, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Identity")));
+                opt.AddPolicy(Policies.SliderContent, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.SliderContent")));
+                opt.AddPolicy(Policies.Lookup, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Lookup")));
+                opt.AddPolicy(Policies.Menu, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Menu")));
+            });
+            services.AddScoped<IAuthorizationHandler, CustomAuthorizationHandler>();
             services.AddScoped<AuthenticationStateProvider, CoreAuthenticationStateProvider>();
             services.AddScoped<CurrentUserService>();
+            services.AddScoped<HttpClientService>();
             services.AddBlazoredLocalStorageAsSingleton();
 
             services.AddSingleton<CategoryService>();

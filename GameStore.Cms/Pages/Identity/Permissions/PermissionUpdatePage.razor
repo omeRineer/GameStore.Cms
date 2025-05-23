@@ -1,0 +1,88 @@
+﻿@inherits BaseDialog
+
+@inject PermissionService PermissionService
+
+<AuthorizeArea Policy="@Policies.Identity">
+    @if (UpdatePermissionModel != null)
+    {
+        <EditForm Model="UpdatePermissionModel" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
+
+            <div class="row mb-2">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="Key:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenTextBox class="w-100" @bind-Value="UpdatePermissionModel.Key" />
+                    <ValidationMessage For="() => UpdatePermissionModel.Key" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="Title:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenTextBox class="w-100" @bind-Value="UpdatePermissionModel.Name" />
+                    <ValidationMessage For="() => UpdatePermissionModel.Name" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="Açıklama:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenTextArea Rows="7" class="w-100" @bind-Value="UpdatePermissionModel.Description" />
+                    <ValidationMessage For="() => UpdatePermissionModel.Description" />
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                    <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                </div>
+            </div>
+
+        </EditForm>
+    }
+</AuthorizeArea>
+
+
+@code {
+    [Parameter] public object PermissionId { get; set; }
+    UpdatePermissionModel UpdatePermissionModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await PermissionService.GetAsync<PermissionModel>((Guid)PermissionId);
+
+        if (result.Data == null)
+        {
+            NotificationService.Error(result.Message);
+            return;
+        }
+
+        UpdatePermissionModel = Mapper.Map<UpdatePermissionModel>(result.Data);
+
+    }
+
+
+    private async Task SaveAsync()
+    {
+        IsLoading = true;
+
+        var result = await PermissionService.UpdateAsync(UpdatePermissionModel);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+}

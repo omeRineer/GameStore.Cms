@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Cms.Models.Game
+namespace GameStore.Cms.Models.Domain
 {
-    public class SingleGameModel
+    public class GameModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -15,10 +15,10 @@ namespace GameStore.Cms.Models.Game
         public DateTime ReleaseDate { get; set; }
         public Common.File CoverImage { get; set; }
 
-        public SingleGame_Category Category { get; set; }
+        public GameModel_Category Category { get; set; }
     }
 
-    public class SingleGame_Category
+    public class GameModel_Category
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

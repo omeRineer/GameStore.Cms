@@ -8,17 +8,5 @@ namespace GameStore.Cms.Services.Master.Identity
     public class RolePermissionService : BaseService
     {
         public RolePermissionService() : base("RolePermissions") { }
-
-        public async Task<RestResponse> CreateAsync(CreateCategoryModel model)
-            => await base.CreateAsync(model);
-
-        public async Task<RestResponse> UpdateAsync(UpdateCategoryModel model)
-            => await base.UpdateAsync(model);
-
-        public async Task<RestResponse<DataResponseModel<SingleCategoryModel>>> GetAsync(Guid id)
-            => await base.GetAsync<Guid, DataResponseModel<SingleCategoryModel>>(id);
-
-        public async Task<RestResponse> DeleteAsync(Guid id)
-            => await base.DeleteAsync(id);
     }
 }

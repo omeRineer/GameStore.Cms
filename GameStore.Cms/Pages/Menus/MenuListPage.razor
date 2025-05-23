@@ -1,4 +1,5 @@
 ﻿@page "/menumanagement"
+@attribute [Authorize(Policies.Menu)]
 
 @inherits BaseDataPage<ODataMenu>
 @inject MenuODataService MenuODataService
@@ -61,13 +62,6 @@
 
     private async void Delete()
     {
-        if (SelectedItem == null)
-        {
-            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Lütfen bir menü seçin!" });
-            return;
-
-        }
-
         var isConfirm = await DialogService.Confirm("Silmek istediğinize emin misiniz?", "Uyarı", new ConfirmOptions { OkButtonText = "Evet", CancelButtonText = "Hayır" });
         if (isConfirm != true)
             return;
@@ -75,10 +69,13 @@
         IsLoading = true;
 
         var result = await MenuService.DeleteAsync(((ODataMenu)SelectedItem).Id);
-        if (!result.IsSuccessful)
-            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = result.ErrorMessage });
-
-        NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = result.StatusCode.ToString() });
+        if (!result.Success)
+        {
+            NotificationService.Error(result.Message);
+            return;
+        }
+        else
+            NotificationService.Success(result.Message);
 
         DialogService.Close(true);
         Refresh();

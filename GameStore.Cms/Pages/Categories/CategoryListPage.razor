@@ -1,4 +1,5 @@
 ﻿@page "/categories"
+@attribute [Authorize(Policies.Category)]
 
 @inherits BaseDataPage<ODataCategory>
 @inject CategoryODataService CategoryODataService
@@ -36,10 +37,6 @@
               }) />
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        var user = await CurrentUserService.GetCurrentUserAsync();
-    }
 
     async Task LoadData(LoadDataArgs args)
     {
@@ -71,11 +68,11 @@
         IsLoading = true;
 
         var result = await CategoryService.DeleteAsync(((ODataCategory)SelectedItem).Id);
-        if (!result.IsSuccessful)
-            NotificationService.Error(result.ErrorMessage);
+        if (!result.Success)
+            NotificationService.Error(result.Message);
         else
         {
-            NotificationService.Success("Kategori bilgisi silindi.");
+            NotificationService.Success(result.Message);
             DialogService.Close(true);
             Refresh();
         }

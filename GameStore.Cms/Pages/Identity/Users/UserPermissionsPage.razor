@@ -1,0 +1,66 @@
+﻿@inherits BaseDialog
+@inject UserService UserService
+@inject PermissionODataService PermissionODataService
+
+<AuthorizeArea Policy="@Policies.Identity">
+    <div class="row">
+        <div class="col-md-9">
+            <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                           FilterOperator="StringFilterOperator.Contains"
+                           AllowFiltering="true"
+                           @bind-Value=@SetUserPermissionsModel.Permissions
+                           TextProperty="Key"
+                           ValueProperty="Id"
+                           Data="@Permissions"
+                           Multiple=true
+                           AllowClear=true
+                           Placeholder="Arama"
+                           Style="width: 100%; height:400px" />
+
+        </div>
+        <div class="col-md-3">
+            <RadzenButton Text="Kaydet" Click="async args=> await SetUserPermissionsAsync()" Style="margin-bottom: 10px; width: 100%" Visible="@(IsLoading == false)" />
+        </div>
+    </div>
+</AuthorizeArea>
+
+@code {
+    [Parameter] public ODataUser User { get; set; }
+
+    SetUserPermissionsModel SetUserPermissionsModel = new SetUserPermissionsModel();
+    IEnumerable<ODataPermission>? Permissions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        var userPermissionsResult = await UserService.GetPermissionsAsync(User.Id);
+        if (userPermissionsResult.Data != null)
+            SetUserPermissionsModel.Permissions = userPermissionsResult.Data.Permissions;
+
+        var permissionsResult = await PermissionODataService.GetListAsync(new ODataRequestParams { });
+        if (permissionsResult.Value != null)
+            Permissions = permissionsResult.Value.OrderByDescending(o => SetUserPermissionsModel?.Permissions?.Contains(o.Id));
+
+        SetUserPermissionsModel.UserId = User.Id;
+
+        IsLoading = false;
+    }
+
+    async Task SetUserPermissionsAsync()
+    {
+        IsLoading = true;
+
+        var result = await UserService.SetPermissionsAsync(SetUserPermissionsModel);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+}

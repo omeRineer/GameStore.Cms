@@ -1,4 +1,5 @@
 ﻿@page "/games"
+@attribute [Authorize(Policies.Game)]
 
 @inherits BaseDataPage<ODataGame>
 
@@ -75,11 +76,11 @@
         IsLoading = true;
 
         var result = await GameService.DeleteAsync(((ODataGame)SelectedItem).Id);
-        if (!result.IsSuccessful)
-            NotificationService.Error(result.ErrorMessage);
+        if (!result.Success)
+            NotificationService.Error(result.Message);
         else
         {
-            NotificationService.Success("Oyun bilgisi silindi.");
+            NotificationService.Success(result.Message);
             DialogService.Close(true);
             Refresh();
         }

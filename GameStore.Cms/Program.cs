@@ -1,10 +1,14 @@
-using Core.Utilities.ServiceTools;
 using GameStore.Cms;
 using GameStore.Cms.Extensions;
 using GameStore.Cms.Models.Blog;
 using GameStore.Cms.Models.Category;
+using GameStore.Cms.Models.Domain;
 using GameStore.Cms.Models.Game;
+using GameStore.Cms.Models.Identity.Permission;
+using GameStore.Cms.Models.Identity.Role;
+using GameStore.Cms.Models.Identity.User;
 using GameStore.Cms.Models.SliderContent;
+using GameStore.Cms.Providers;
 using GameStore.Cms.Services.Master;
 using GameStore.Cms.Services.OData;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,13 +25,15 @@ builder.Services.AddServices();
 builder.Services.AddODataServices();
 builder.Services.AddAutoMapper(opt =>
 {
-    opt.CreateMap<SingleBlogModel, UpdateBlogModel>().ReverseMap();
-    opt.CreateMap<SingleCategoryModel, UpdateCategoryModel>().ReverseMap();
-    opt.CreateMap<SingleGameModel, UpdateGameModel>()
+    opt.CreateMap<BlogModel, UpdateBlogModel>().ReverseMap();
+    opt.CreateMap<CategoryModel, UpdateCategoryModel>().ReverseMap();
+    opt.CreateMap<GameModel, UpdateGameModel>()
                 .ForMember(d => d.CategoryId, opt => opt.MapFrom(s => s.Category.Id))
                 .ReverseMap();
-    opt.CreateMap<SingleSliderContentModel, UpdateSliderContentModel>();
-
+    opt.CreateMap<SliderContentModel, UpdateSliderContentModel>();
+    opt.CreateMap<UserModel, UpdateUserModel>();
+    opt.CreateMap<RoleModel, UpdateRoleModel>();
+    opt.CreateMap<PermissionModel, UpdatePermissionModel>();
 
     opt.AddGlobalIgnore("CreateDate");
     opt.AddGlobalIgnore("EditDate");

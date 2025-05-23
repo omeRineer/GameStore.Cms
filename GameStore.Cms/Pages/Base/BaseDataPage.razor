@@ -9,7 +9,7 @@
     protected LoadDataArgs LastArgs;
     protected int Count;
 
-    
+
 
     protected override void OnInitialized()
     {
@@ -30,7 +30,10 @@
 
     protected virtual async void Close(dynamic result)
     {
-
+        if (result == true)
+        {
+            Refresh();
+        }
     }
 
     protected virtual async void Refresh()

@@ -3,7 +3,7 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <RedirectionToLogin />
+                    <CheckAuthorize />
                 </NotAuthorized>
                 <Authorizing>
                     <p>Yetkilendiriliyor...</p>
@@ -13,9 +13,7 @@
         </Found>
         <NotFound>
             <PageTitle>Not found</PageTitle>
-            <p>
-                Sayfa Bulunamadı
-            </p>
+            <NotFound />
         </NotFound>
     </Router>
 </CascadingAuthenticationState>

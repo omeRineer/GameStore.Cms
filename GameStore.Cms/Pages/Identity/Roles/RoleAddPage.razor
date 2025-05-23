@@ -1,0 +1,68 @@
+﻿@inherits BaseDialog
+@inject RoleService RoleService
+
+<AuthorizeArea Policy="@Policies.Identity">
+    <EditForm Model="newRole" OnValidSubmit="SaveAsync">
+        <DataAnnotationsValidator />
+
+        <div class="row mb-2">
+            <div class="col-md-2 align-items-center d-flex">
+                <RadzenLabel Text="Key:" />
+            </div>
+            <div class="col-md-10">
+                <RadzenTextBox class="w-100" @bind-Value="newRole.Key" />
+                <ValidationMessage For="() => newRole.Key" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-2 align-items-center d-flex">
+                <RadzenLabel Text="Title:" />
+            </div>
+            <div class="col-md-10">
+                <RadzenTextBox class="w-100" @bind-Value="newRole.Name" />
+                <ValidationMessage For="() => newRole.Name" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-2 align-items-center d-flex">
+                <RadzenLabel Text="Açıklama:" />
+            </div>
+            <div class="col-md-10">
+                <RadzenTextArea Rows="7" class="w-100" @bind-Value="newRole.Description" />
+                <ValidationMessage For="() => newRole.Description" />
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+            </div>
+        </div>
+
+    </EditForm>
+</AuthorizeArea>
+
+@code {
+    CreateRoleModel newRole = new CreateRoleModel();
+
+    private async Task SaveAsync()
+    {
+        IsLoading = true;
+
+        var result = await RoleService.CreateAsync(newRole);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+}
+

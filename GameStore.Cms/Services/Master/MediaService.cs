@@ -1,5 +1,4 @@
 ﻿using GameStore.Cms.Services.Base;
-using Core.Utilities.RestHelper;
 using RestSharp;
 
 namespace GameStore.Cms.Services.Master

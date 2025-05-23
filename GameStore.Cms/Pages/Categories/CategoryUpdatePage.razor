@@ -2,29 +2,31 @@
 
 @inject CategoryService CategoryService
 
-@if (UpdateModel != null)
-{
-    <EditForm Model="UpdateModel" OnValidSubmit="SaveAsync">
-        <DataAnnotationsValidator />
+<AuthorizeArea Policy="@Policies.Blog">
+    @if (UpdateModel != null)
+    {
+        <EditForm Model="UpdateModel" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
 
-        <div class="row">
-            <div class="col-md-4 align-items-center d-flex">
-                <RadzenLabel Text="Kategori Adı:" />
+            <div class="row">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Kategori Adı:" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenTextBox class="w-100" @bind-Value="UpdateModel.Name" />
+                    <ValidationMessage For="() => UpdateModel.Name" />
+                </div>
             </div>
-            <div class="col-md-8">
-                <RadzenTextBox class="w-100" @bind-Value="UpdateModel.Name" />
-                <ValidationMessage For="() => UpdateModel.Name" />
-            </div>
-        </div>
 
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
-                <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                    <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                </div>
             </div>
-        </div>
-    </EditForm>
-}
+        </EditForm>
+    }
+</AuthorizeArea>
 
 @code {
     [Parameter] public object CategoryId { get; set; }
@@ -32,15 +34,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await CategoryService.GetAsync((Guid)CategoryId);
+        var result = await CategoryService.GetAsync<CategoryModel>((Guid)CategoryId);
 
-        if (result.Data?.Data == null)
+        if (result.Data == null)
         {
-            NotificationService.Error("Kategori bulunamadı!");
+            NotificationService.Error(result.Message);
             return;
         }
 
-        UpdateModel = Mapper.Map<UpdateCategoryModel>(result.Data.Data);
+        UpdateModel = Mapper.Map<UpdateCategoryModel>(result.Data);
 
     }
 
@@ -51,14 +53,14 @@
 
         var result = await CategoryService.UpdateAsync(UpdateModel);
 
-        if (!result.IsSuccessful)
-            NotificationService.Error(result.ErrorMessage);
+        if (!result.Success)
+            NotificationService.Error(result.Message);
         else
         {
-            NotificationService.Success("Kategori bilgisi güncellendi.");
+            NotificationService.Success(result.Message);
             DialogService.Close(true);
         }
-        
+
         IsLoading = false;
     }
 }

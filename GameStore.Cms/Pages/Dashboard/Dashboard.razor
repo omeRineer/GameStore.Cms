@@ -1,7 +1,12 @@
 ﻿@page "/"
 
-<h3>Dashboard</h3>
+<h3>Hoşgeldin @CurrentUser?.Name</h3>
 
 @code {
+    CurrentUser? CurrentUser;
 
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentUser = await CurrentUserService.GetCurrentUserAsync();
+    }
 }

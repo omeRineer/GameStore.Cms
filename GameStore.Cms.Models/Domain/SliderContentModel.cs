@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Cms.Models.SliderContent
+namespace GameStore.Cms.Models.Domain
 {
-    public class SingleSliderContentModel
+    public class SliderContentModel
     {
         public Guid Id { get; set; }
         public string? Header { get; set; }
@@ -14,14 +14,5 @@ namespace GameStore.Cms.Models.SliderContent
         public int Priority { get; set; }
         public bool IsActive { get; set; }
         public Common.File Image { get; set; }
-
-        public SingleSliderContentTypeModel SliderType { get; set; }
-    }
-
-    public class SingleSliderContentTypeModel
-    {
-        public int Id { get; set; }
-        public string Code { get; set; }
-        public string Description { get; set; }
     }
 }

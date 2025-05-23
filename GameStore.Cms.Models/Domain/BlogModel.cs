@@ -1,6 +1,6 @@
-﻿namespace GameStore.Cms.Models.Blog
+﻿namespace GameStore.Cms.Models.Domain
 {
-    public class SingleBlogModel
+    public class BlogModel
     {
         public Guid Id { get; set; }
         public string Header { get; set; }

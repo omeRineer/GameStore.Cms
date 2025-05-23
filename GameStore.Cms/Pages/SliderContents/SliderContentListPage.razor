@@ -1,4 +1,5 @@
 ﻿@page "/slidercontents"
+@attribute [Authorize(Policies.SliderContent)]
 
 @inherits BaseDataPage<ODataSliderContent>
 @inject SliderContentODataService SliderContentODataService
@@ -45,14 +46,14 @@
         LastArgs = args;
 
         var result = await SliderContentODataService.GetListAsync(new ODataRequestParams
-            {
-                Count = true,
-                Filter = args.Filter,
-                OrderBy = args.OrderBy,
-                Skip = args.Skip,
-                Top = args.Top,
-                Expand = "SliderType"
-            });
+        {
+            Count = true,
+            Filter = args.Filter,
+            OrderBy = args.OrderBy,
+            Skip = args.Skip,
+            Top = args.Top,
+            Expand = "SliderType"
+        });
 
         Data = result.Value.AsODataEnumerable();
         Count = result.Count;
@@ -70,15 +71,15 @@
         IsLoading = true;
 
         var result = await SliderContentService.DeleteAsync(((ODataSliderContent)SelectedItem).Id);
-        if (!result.IsSuccessful)
-            NotificationService.Error(result.ErrorMessage);
+        if (!result.Success)
+            NotificationService.Error(result.Message);
         else
         {
-            NotificationService.Success("Slider içeriği silindi.");
+            NotificationService.Success(result.Message);
             DialogService.Close(true);
             Refresh();
         }
-        
+
         IsLoading = false;
     }
 
