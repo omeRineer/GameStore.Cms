@@ -1,9 +1,4 @@
-﻿using GameStore.Cms.Models.Category;
-using GameStore.Cms.Models.Identity.Permission;
-using GameStore.Cms.Models.Identity.Role;
-using GameStore.Cms.Models.Rest;
-using GameStore.Cms.Services.Base;
-using RestSharp;
+﻿using GameStore.Cms.Services.Base;
 
 namespace GameStore.Cms.Services.Master.Identity
 {

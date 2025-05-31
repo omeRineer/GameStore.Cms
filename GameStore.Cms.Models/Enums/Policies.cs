@@ -15,5 +15,6 @@ namespace GameStore.Cms.Models.Enums
         public const string SliderContent = "SliderContent";
         public const string Identity = "Identity";
         public const string Menu = "Menu";
+        public const string Notification = "Notification";
     }
 }

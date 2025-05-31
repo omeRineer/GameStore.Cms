@@ -1,6 +1,4 @@
-﻿using Blazored.LocalStorage;
-using GameStore.Cms.Models.Identity;
-using GameStore.Cms.Models.Rest;
+﻿using GameStore.Cms.Models.Rest;
 using GameStore.Cms.Providers;
 using GameStore.Cms.Services.Internal;
 using RestSharp;

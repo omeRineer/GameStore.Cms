@@ -1,6 +1,5 @@
-﻿using GameStore.Cms.Models.Auth;
-using GameStore.Cms.Models.Blog;
-using GameStore.Cms.Models.Rest;
+﻿using GameStore.Cms.Models.Rest;
+using GameStore.Cms.Models.Rest.Auth;
 using GameStore.Cms.Services.Base;
 using RestSharp;
 

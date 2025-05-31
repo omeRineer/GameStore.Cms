@@ -105,7 +105,7 @@
         else
         {
             NotificationService.Success(result.Message);
-            DialogService.Close(true);
+            DialogService.Close(DialogResult.Refresh);
         }
 
         IsLoading = false;

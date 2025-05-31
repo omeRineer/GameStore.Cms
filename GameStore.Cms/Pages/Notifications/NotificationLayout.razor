@@ -1,0 +1,135 @@
+﻿@layout MainLayout
+@inherits LayoutComponentBase
+@implements IDisposable
+
+@attribute [Authorize(Policies.Notification)]
+
+@inject Meta.NotificationService MetaNotificationService
+
+
+<div class="notification-layout">
+    <aside class="notification-menu shadow-sm rounded-3">
+        <ul>
+            <li>
+                <NavLink href="/notifications/all" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
+                    <span>📬 Tümü</span>
+                    @if (NotificationStorage.Notifications.Any(f => !f.IsRead))
+                    {
+                        <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => !c.IsRead)</span>
+                    }
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="/notifications/sent" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
+                    <span>📤 Gönderilen</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="/notifications/system" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
+                    <span>⚙️ Sistem Mesajları</span>
+                    @if (NotificationStorage.Notifications.Any(f => !f.IsRead))
+                    {
+                        <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => !c.IsRead)</span>
+                    }
+
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="/notifications/unreads" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
+                    <span>🔴 Okunmayanlar</span>
+                    @if (NotificationStorage.Notifications.Any(f => !f.IsRead))
+                    {
+                        <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => !c.IsRead)</span>
+                    }
+
+                </NavLink>
+            </li>
+            <li>
+                <NavLink href="/notifications/send" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
+                    <span>📨 Bildirim Gönder</span>
+                </NavLink>
+            </li>
+        </ul>
+    </aside>
+
+    <section class="notification-content">
+        @Body
+    </section>
+</div>
+
+
+<style>
+    .notification-layout {
+        display: flex;
+        height: 87vh;
+        font-family: 'Segoe UI', sans-serif;
+        gap: 16px;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    .notification-menu {
+        width: 250px;
+        background-color: white;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        overflow-y: auto;
+        height: 100%;
+    }
+
+        .notification-menu ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .notification-menu li {
+            margin-bottom: 12px;
+        }
+
+    .menu-item {
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        background-color: #f8f9fa;
+    }
+
+        .menu-item.active,
+        .menu-item:hover {
+            background-color: #0078d7;
+            color: white;
+        }
+
+    .notification-content {
+        flex: 1;
+        padding: 20px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+        overflow-y: auto;
+        height: 100%;
+    }
+
+</style>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        NotificationStorage.OnChanged += OnNotificationChanged;
+    }
+
+    async void OnNotificationChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        NotificationStorage.OnChanged -= OnNotificationChanged;
+    }
+
+}

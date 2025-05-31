@@ -1,18 +1,18 @@
-﻿@inject MenuODataService MenuODataService
+﻿@inject MenuService MenuService
 
 <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
     <RadzenPanelMenu>
-        @if (menuItems != null && menuItems.Count() > 0)
+        @if (menuListModel?.Menus != null && menuListModel?.Menus.Count() > 0)
         {
-            @foreach (var menuItem in menuItems.Where(f => f.ParentMenuId == null).OrderBy(o => o.Priority).ToList())
+            @foreach (var menuItem in menuListModel.Menus.Where(f => f.ParentMenuId == null).OrderBy(o => o.Priority).ToList())
             {
                 <RadzenPanelMenuItem Text="@($"{menuItem.Code} {menuItem.Title}")"
                                      Icon="@menuItem.Icon"
                                      Click=@(args=> { Navigate(menuItem); })>
 
-                    @if (menuItems.Any(e => e.ParentMenuId == menuItem.Id))
+                    @if (menuListModel.Menus.Any(e => e.ParentMenuId == menuItem.Id))
                     {
-                        @foreach (var childMenuItem in menuItems.Where(f => f.ParentMenuId == menuItem.Id).OrderBy(o => o.Priority).ToList())
+                        @foreach (var childMenuItem in menuListModel.Menus.Where(f => f.ParentMenuId == menuItem.Id).OrderBy(o => o.Priority).ToList())
                         {
                             <RadzenPanelMenuItem Click=@(args=> { Navigate(childMenuItem); })
                                                  Text="@($"{childMenuItem.Code} {childMenuItem.Title}")"
@@ -28,19 +28,22 @@
 
 @code {
     bool sidebar1Expanded = true;
-    IEnumerable<ODataMenu> menuItems;
+    GetMenusModel? menuListModel;
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await MenuODataService.GetListAsync(new ODataRequestParams
-            {
-                Expand = "ParentMenu"
-            });
+        var user = await CurrentUserService.GetCurrentUserAsync();
+        if (!user.IsAuthenticated)
+            return;
 
-        menuItems = result.Value.AsODataEnumerable();
+        var result = await MenuService.GetSessionMenusAsync();
+
+        if (result.Success)
+            menuListModel = result.Data;
+
     }
 
-    private void Navigate(ODataMenu menuItem)
+    private void Navigate(GetMenus_Item menuItem)
     {
         if (!string.IsNullOrEmpty(menuItem.Path))
         {

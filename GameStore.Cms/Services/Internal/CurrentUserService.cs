@@ -1,5 +1,5 @@
 ﻿using Blazored.LocalStorage;
-using GameStore.Cms.Models.Identity;
+using GameStore.Cms.Models.Rest.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
@@ -16,6 +16,9 @@ namespace GameStore.Cms.Services.Internal
             AuthenticationStateProvider = authenticationStateProvider;
             LocalStorageService = localStorageService;
         }
+
+        public event Action OnLogin;
+        public event Action OnLogout;
 
         public async Task<CurrentUser> GetCurrentUserAsync()
         {
@@ -50,6 +53,8 @@ namespace GameStore.Cms.Services.Internal
         {
             await LocalStorageService.RemoveItemAsync("AUTH_TOKEN");
             CurrentUser = null;
+
+            OnLogout?.Invoke();
         }
     }
 }

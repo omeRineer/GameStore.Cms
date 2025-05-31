@@ -10,6 +10,7 @@ namespace GameStore.Cms.Options.Models
     {
         public WebAPIOptions Web { get; set; }
         public ODataAPIOptions OData { get; set; }
+        public MetaAPIOptions Meta { get; set; }
     }
     public class WebAPIOptions
     {
@@ -18,6 +19,12 @@ namespace GameStore.Cms.Options.Models
     }
 
     public class ODataAPIOptions
+    {
+        public string ApiUrl { get; set; }
+        public string BaseUrl { get; set; }
+    }
+
+    public class MetaAPIOptions
     {
         public string ApiUrl { get; set; }
         public string BaseUrl { get; set; }

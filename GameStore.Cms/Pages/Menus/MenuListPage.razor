@@ -11,11 +11,24 @@
                                            null,
                                            new DialogOptions{Width = "600px"} )) />
 
-        <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<MenuAddPage>("Menü Düzenle",
-                                          new Dictionary<string, object> { { "MenuId", ((ODataMenu)SelectedItem).Id } },
-                                          new DialogOptions{Width = "600px"})) />
-        <RadzenButton Icon="remove" Click=@Delete />
         <RadzenButton Icon="refresh" Click=@Refresh />
+
+        @if (SelectedItem != null)
+        {
+            <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<MenuUpdatePage>("Menü Düzenle",
+                                  new Dictionary<string, object> { { "MenuId", ((ODataMenu)SelectedItem).Id } },
+                                  new DialogOptions{Width = "600px"})) />
+            <RadzenButton Icon="remove" Click=@Delete />
+
+            <RadzenButton Icon="key" Click=@(async args => await DialogService.OpenAsync<MenuPermissionsPage>(SelectedItem.Title,
+                new Dictionary<string, object> { { "Menu", SelectedItem } },
+                new DialogOptions{Width = "700px"})) />
+
+            <RadzenButton Icon="badge" Click=@(async args => await DialogService.OpenAsync<MenuRolesPage>(SelectedItem.Title,
+                new Dictionary<string, object> { { "Menu", SelectedItem } },
+                new DialogOptions{Width = "700px"})) />
+        }
+
     </div>
 </div>
 
@@ -38,7 +51,7 @@
 
 @code {
 
-    async Task LoadData(LoadDataArgs args)
+    protected override async Task LoadData(LoadDataArgs args)
     {
         IsLoading = true;
         LastArgs = args;
@@ -56,8 +69,8 @@
         Data = result.Value.AsODataEnumerable();
         Count = result.Count;
 
-        StateHasChanged();
         IsLoading = false;
+        StateHasChanged();
     }
 
     private async void Delete()
@@ -77,25 +90,9 @@
         else
             NotificationService.Success(result.Message);
 
-        DialogService.Close(true);
+        DialogService.Close(DialogResult.Refresh);
         Refresh();
         IsLoading = false;
-    }
-
-    protected async override void Close(dynamic result)
-    {
-        if (result == true)
-        {
-            await LoadData(LastArgs);
-            StateHasChanged();
-        }
-    }
-
-    protected async override void Refresh()
-    {
-        base.Refresh();
-        await LoadData(LastArgs);
-        StateHasChanged();
     }
 
 }

@@ -7,8 +7,10 @@
 @inject IJSRuntime JSRuntime
 @inject ILocalStorageService LocalStorageService
 @inject CurrentUserService CurrentUserService
+@inject NotificationStorage NotificationStorage
+@inject HubConnectionProvider HubConnectionProvider
 
-
+@using Microsoft.AspNetCore.SignalR.Client
 @using Extensions
 
 @using System.Net.Http
@@ -24,6 +26,7 @@
 @using Radzen
 @using Radzen.Blazor
 @using Shared.Components
+@using GameStore.Cms.Shared.Components
 @using Blazored.LocalStorage;
 
 @using GameStore.Cms.Providers
@@ -39,26 +42,32 @@
 @using GameStore.Cms.Services.Master
 @using GameStore.Cms.Services.Master.Identity
 @using GameStore.Cms.Services.Internal
+@using Meta = GameStore.Cms.Services.Meta
 
-@using GameStore.Cms.Models.Blog
-@using GameStore.Cms.Models.Domain
+@using GameStore.Cms.Models.Rest.Blog
+@using GameStore.Cms.Models.Rest.Menu
+@using GameStore.Cms.Models.Domain.Core
+@using GameStore.Cms.Models.Domain.Meta
 @using GameStore.Cms.Models.Rest
-@using GameStore.Cms.Models.Auth
-@using GameStore.Cms.Models.SliderContent
-@using GameStore.Cms.Models.Category
+@using GameStore.Cms.Models.Rest.Auth
+@using GameStore.Cms.Models.Rest.SliderContent
+@using GameStore.Cms.Models.Rest.Category
 @using GameStore.Cms.Models.Setting
-@using GameStore.Cms.Models.Identity
-@using GameStore.Cms.Models.Identity.User
-@using GameStore.Cms.Models.Identity.Role
-@using GameStore.Cms.Models.Identity.Permission
+@using GameStore.Cms.Models.Rest.Identity
+@using GameStore.Cms.Models.Rest.Identity.User
+@using GameStore.Cms.Models.Rest.Identity.Role
+@using GameStore.Cms.Models.Rest.Identity.Permission
 @using GameStore.Cms.Models.Common
-@using GameStore.Cms.Models.Game
+@using GameStore.Cms.Models.Rest.Game
+@using GameStore.Cms.Models.Meta.Notification
+@using GameStore.Cms.Models.SignalR
 @using GameStore.Cms.Models.Enums
 @using GameStore.Cms.Models.OData
 @using GameStore.Cms.Models.OData.Identity
 @using BaseModel = GameStore.Cms.Models.Inputs
 
-@using GameStore.Cms.Shared.Components
+@using GameStore.Cms.Storages
+
 
 
 

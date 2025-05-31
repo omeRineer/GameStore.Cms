@@ -1,0 +1,67 @@
+﻿@inherits BaseDialog
+@inject MenuService MenuService
+@inject RoleODataService RoleODataService
+
+<AuthorizeArea Policy="@Policies.Identity">
+    <div class="row">
+        <div class="col-md-9">
+            <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                           FilterOperator="StringFilterOperator.Contains"
+                           AllowFiltering="true"
+                           @bind-Value=@SetMenuRolesModel.Roles
+                           TextProperty="Key"
+                           ValueProperty="Id"
+                           Data="@Roles"
+                           Multiple=true
+                           AllowClear=true
+                           Placeholder="Arama"
+                           Style="width: 100%; height:400px" />
+
+        </div>
+        <div class="col-md-3">
+            <RadzenButton Text="Kaydet" Click="async args=> await SetMenuRolesAsync()" Style="margin-bottom: 10px; width: 100%" Visible="@(IsLoading == false)" />
+        </div>
+    </div>
+</AuthorizeArea>
+
+@code {
+    [Parameter] public ODataMenu Menu { get; set; }
+
+    SetMenuRolesModel SetMenuRolesModel = new SetMenuRolesModel();
+    IEnumerable<ODataRole>? Roles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        var menuRolesResult = await MenuService.GetRolesAsync(Menu.Id);
+        if (menuRolesResult.Data != null)
+            SetMenuRolesModel.Roles = menuRolesResult.Data.Roles;
+
+        var rolesResult = await RoleODataService.GetListAsync(new ODataRequestParams { });
+        if (rolesResult.Value != null)
+            Roles = rolesResult.Value.OrderByDescending(o => SetMenuRolesModel?.Roles?.Contains(o.Id)); ;
+
+
+        SetMenuRolesModel.MenuId = Menu.Id;
+
+        IsLoading = false;
+    }
+
+    async Task SetMenuRolesAsync()
+    {
+        IsLoading = true;
+
+        var result = await MenuService.SetRolesAsync(SetMenuRolesModel);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+}

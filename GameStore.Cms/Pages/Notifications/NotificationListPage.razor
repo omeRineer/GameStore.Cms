@@ -1,0 +1,222 @@
+﻿@page "/notifications/{*Tab}"
+@implements IDisposable
+
+@layout NotificationLayout
+
+@inject Meta.NotificationService MetaNotificationService
+
+<RadzenPanel>
+    <Loading IsLoading="IsLoading">
+        @if (Notifications != null && Notifications.Count > 0)
+        {
+            @foreach (var notification in Notifications.OrderByDescending(o => o.CreateDate))
+            {
+                <div @key="notification.Id" @onclick="async args => await GetDetailAsync(notification)" class="notice notice-@GetColor(notification.Type) animate-slide-in">
+                    <div class="d-flex align-items-start">
+                        @if (!notification.IsRead)
+                        {
+                            <span class="blink-dot me-2 mt-1"></span>
+                        }
+                        <div class="notice-title">
+                            <strong>@notification.Title</strong>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(notification.Content))
+                    {
+                        <div class="notice-content ms-4">
+                            @notification.Content
+                        </div>
+                    }
+                    <div class="d-flex flex-column align-items-end ms-3">
+                        <span class="small text-muted mb-1">@notification.CreateDate.ToString("g")</span>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <NoData />
+        }
+    </Loading>
+</RadzenPanel>
+
+<style>
+    .notice {
+        padding: 15px;
+        background-color: #fafafa;
+        border-left: 6px solid #7f7f84;
+        margin-bottom: 10px;
+        -webkit-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+        -moz-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+        box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+    }
+
+        .notice:hover {
+            cursor: pointer;
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.3);
+            -webkit-box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.3);
+            -moz-box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.3);
+        }
+
+    .notice-content {
+        margin-top: 4px;
+        color: #555;
+    }
+
+    .notice-sm {
+        padding: 10px;
+        font-size: 80%;
+    }
+
+    .notice-lg {
+        padding: 35px;
+        font-size: large;
+    }
+
+    .notice-success {
+        border-color: #80D651;
+    }
+
+        .notice-success .notice-title {
+            color: #80D651;
+        }
+
+    .notice-info {
+        border-color: #45ABCD;
+    }
+
+        .notice-info .notice-title {
+            color: #45ABCD;
+        }
+
+    .notice-warning {
+        border-color: #FEAF20;
+    }
+
+        .notice-warning .notice-title {
+            color: #FEAF20;
+        }
+
+    .notice-danger {
+        border-color: #d73814;
+    }
+
+        .notice-danger .notice-title {
+            color: #d73814;
+        }
+
+
+
+
+    .animate-slide-in {
+        animation: slideInFade 0.4s ease-out forwards;
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    @@keyframes slideInFade {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .blink-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #ff0000;
+        border-radius: 50%;
+        animation: blink 1s ease-in-out infinite;
+        flex-shrink: 0;
+        align-self: center;
+    }
+
+    @@keyframes blink {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+    }
+</style>
+
+@code {
+    [Parameter] public string? Tab { get; set; }
+
+    private bool IsLoading { get; set; } = false;
+    private List<NotificationModel> Notifications;
+    private CurrentUser? CurrentUser;
+
+    async Task GetDetailAsync(NotificationModel notification)
+    {
+        var getNotificationResult = await MetaNotificationService.ReadAsync<GetNotificationDetailModel>(notification.Id);
+
+        if (getNotificationResult.Success)
+            notification.IsRead = true;
+
+        NotificationStorage.ForceChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await UpdateNotificationsAsync();
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        NotificationStorage.OnChanged += OnNotificationChanged;
+    }
+
+    private async Task UpdateNotificationsAsync()
+    {
+        CurrentUser = await CurrentUserService.GetCurrentUserAsync();
+
+        switch (Tab)
+        {
+            case "all":
+                Notifications = NotificationStorage.Notifications.ToList();
+                break;
+
+            case "sent":
+                Notifications = NotificationStorage.Notifications.Where(f => f.Sender == CurrentUser.Id).ToList();
+                break;
+
+            case "unreads":
+                Notifications = NotificationStorage.Notifications.Where(f => !f.IsRead).ToList();
+                break;
+
+            default:
+                Notifications = NotificationStorage.Notifications.ToList();
+                break;
+        }
+    }
+
+    private async void OnNotificationChanged()
+    {
+        await UpdateNotificationsAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        NotificationStorage.OnChanged -= OnNotificationChanged;
+    }
+
+    string GetColor(string type)
+    {
+        return type switch
+        {
+            "error" => "danger",
+            "info" => "info",
+            "warning" => "warning",
+            "success" => "success",
+
+            _ => "secondary"
+        };
+    }
+
+}

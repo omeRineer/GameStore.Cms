@@ -1,5 +1,151 @@
-﻿<h3>MenuUpdatePage</h3>
+﻿@inherits BaseDialog
+
+@inject MenuODataService MenuODataService
+@inject MenuService MenuService
+@inject MaterialconService MaterialconService
+
+<AuthorizeArea Policy="@Policies.Menu">
+    <Loading IsLoading="IsLoading">
+        @if (UpdateMenuModel != null)
+        {
+            <EditForm Model="UpdateMenuModel" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
+
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Üst Menü:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenDropDown class="w-100"
+                                        @bind-Value="UpdateMenuModel.ParentMenuId"
+                                        Data="@Menus"
+                                        AllowClear="true"
+                                        TextProperty="Title"
+                                        ValueProperty="Id" />
+                        <ValidationMessage For="() => UpdateMenuModel.ParentMenuId" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Kod:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenTextBox class="w-100" @bind-Value="UpdateMenuModel.Code" />
+                        <ValidationMessage For="() => UpdateMenuModel.Code" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Title:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenTextBox class="w-100" @bind-Value="UpdateMenuModel.Title" />
+                        <ValidationMessage For="() => UpdateMenuModel.Title" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Sıra:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenNumeric class="w-100" @bind-Value="UpdateMenuModel.Priority" />
+                        <ValidationMessage For="() => UpdateMenuModel.Priority" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Path:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenTextBox class="w-100" @bind-Value="UpdateMenuModel.Path" />
+                        <ValidationMessage For="() => UpdateMenuModel.Path" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Icon:" />
+                    </div>
+                    <div class="col-md-10 align-items-center d-flex">
+                        <RadzenButton Text="Icon Seç" Click=@(async args => await OpenIconDialogAsync()) />
+                        @if (UpdateMenuModel.Icon != null)
+                        {
+                            <RadzenIcon Icon="@UpdateMenuModel.Icon" Style="font-size: 32px;" />
+                        }
+                        <ValidationMessage For="() => UpdateMenuModel.Icon" />
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                        <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                    </div>
+                </div>
+
+            </EditForm>
+        }
+    </Loading>
+</AuthorizeArea>
 
 @code {
+    [Parameter] public object MenuId { get; set; }
 
+    UpdateMenuModel UpdateMenuModel;
+    IEnumerable<ODataMenu>? Menus;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        var menuListResponse = await MenuODataService.GetListAsync(new ODataRequestParams
+        {
+            Filter = "ParentMenuId eq null"
+        });
+        Menus = menuListResponse.Value;
+
+        var result = await MenuService.GetAsync<MenuModel>((Guid)MenuId);
+
+        if (result.Data == null)
+        {
+            NotificationService.Error(result.Message);
+            return;
+        }
+
+        UpdateMenuModel = Mapper.Map<UpdateMenuModel>(result.Data);
+
+        IsLoading = false;
+    }
+
+    private async Task SaveAsync()
+    {
+        IsLoading = true;
+
+        var result = await MenuService.UpdateAsync(UpdateMenuModel);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(DialogResult.Refresh);
+        }
+
+        IsLoading = false;
+    }
+
+    private async Task OpenIconDialogAsync()
+    {
+        var selectedIcon = await DialogService.OpenAsync<IconSelect>("Icon Seçimi",
+                                           null,
+                                           new DialogOptions { Height = "600px", Width = "800px" });
+
+        if (selectedIcon is string icon)
+            UpdateMenuModel.Icon = icon.ToString();
+    }
 }
+

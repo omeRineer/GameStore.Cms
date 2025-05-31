@@ -1,0 +1,41 @@
+﻿<div class="no-data-container">
+    <div class="icon">&#128712;</div>
+    <h2>@Title</h2>
+    <p>@Message</p>
+</div>
+
+<style>
+    .no-data-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px 20px;
+        font-family: 'Segoe UI', sans-serif;
+        color: #666;
+        opacity: 0.9;
+    }
+
+    .icon {
+        font-size: 80px;
+        color: #cc0000;
+        margin-bottom: 20px;
+    }
+
+    .no-data-container h2 {
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .no-data-container p {
+        font-size: 18px;
+        color: #777;
+    }
+</style>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Sonuç Bulunamadı";
+    [Parameter]public string Message { get; set; } = "Gösterilecek birşey yok";
+}

@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
+@implements IDisposable
+
 <RadzenComponents />
 <RadzenLayout>
 
@@ -32,6 +34,37 @@
     protected override async Task OnInitializedAsync()
     {
         User = await CurrentUserService.GetCurrentUserAsync();
+
+
+        if (User.IsAuthenticated)
+        {
+            NotificationStorage.OnChanged += OnNotificationChanged;
+            await NotificationStorage.LoadAsync();
+
+            var token = await LocalStorageService.GetItemAsStringAsync("AUTH_TOKEN");
+            var notificationHub = HubConnectionProvider.CreateConnection<ReceiveNotificationModel>("/hubs/notifications",
+                                                                                 new Dictionary<string, Action<ReceiveNotificationModel>>
+                                                                                 {
+                                                                                     {
+                                                                                         "ReceiveNotification",
+                                                                                         (message)=>
+                                                                                         {
+                                                                                             NotificationStorage.Add(new NotificationModel
+                                                                                                                 {
+                                                                                                                    Id = message.Id,
+                                                                                                                    Content=message.Content,
+                                                                                                                    ContentType = message.ContentType,
+                                                                                                                    Type = message.Type,
+                                                                                                                    Sender = message.Sender,
+                                                                                                                    Title = message.Title,
+                                                                                                                    IsRead = message.IsRead,
+                                                                                                                    CreateDate = message.CreateDate
+                                                                                                                 });
+                                                                                         }
+                                                                                     }
+                                                                                     }, token);
+            await notificationHub.StartAsync();
+        }
     }
 
     async Task LogoutAsync()
@@ -39,5 +72,15 @@
         await CurrentUserService.LogoutAsync();
 
         NavigationManager.NavigateTo("/login", true);
+    }
+    private async void OnNotificationChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    public void Dispose()
+    {
+        NotificationStorage.OnChanged -= OnNotificationChanged;
     }
 }

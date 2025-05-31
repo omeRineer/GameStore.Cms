@@ -11,6 +11,8 @@
                       null,
                       new DialogOptions{Width = "1000px"} )) />
 
+        <RadzenButton Icon="refresh" Click=@Refresh />
+
         @if (SelectedItem != null)
         {
             <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<BlogUpdatePage>("Blog Düzenle",
@@ -19,7 +21,7 @@
             <RadzenButton Icon="remove" Click=@DeleteAsync />
         }
 
-        <RadzenButton Icon="refresh" Click=@Refresh />
+
     </div>
 </div>
 
@@ -42,7 +44,7 @@
 
 @code {
 
-    async Task LoadData(LoadDataArgs args)
+    protected override async Task LoadData(LoadDataArgs args)
     {
         IsLoading = true;
         LastArgs = args;
@@ -59,8 +61,8 @@
         Data = result.Value.AsODataEnumerable();
         Count = result.Count;
 
-        StateHasChanged();
         IsLoading = false;
+        StateHasChanged();
     }
 
     private async void DeleteAsync()
@@ -77,27 +79,11 @@
         else
         {
             NotificationService.Success(result.Message);
-            DialogService.Close(true);
+            DialogService.Close(DialogResult.Refresh);
             Refresh();
         }
 
         IsLoading = false;
-    }
-
-    protected async override void Close(dynamic result)
-    {
-        if (result is bool val && val == true)
-        {
-            await LoadData(LastArgs);
-            StateHasChanged();
-        }
-    }
-
-    protected async override void Refresh()
-    {
-        base.Refresh();
-        await LoadData(LastArgs);
-        StateHasChanged();
     }
 
 }
