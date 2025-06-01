@@ -3,66 +3,68 @@
 @inject BlogService BlogService
 
 <AuthorizeArea Policy="@Policies.Blog">
-    @if (UpdateBlogModel != null)
-    {
-        <EditForm Model="UpdateBlogModel" OnValidSubmit="SaveAsync">
-            <DataAnnotationsValidator />
+    <Loading IsLoading="IsLoading">
+        @if (UpdateBlogModel != null)
+        {
+            <EditForm Model="UpdateBlogModel" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
 
-            <div class="row mb-2">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="Başlık:" />
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Başlık:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenTextBox class="w-100" @bind-Value="UpdateBlogModel.Header" />
+                        <ValidationMessage class="fs-small" For="() => UpdateBlogModel.Header" />
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenTextBox class="w-100" @bind-Value="UpdateBlogModel.Header" />
-                    <ValidationMessage class="fs-small" For="() => UpdateBlogModel.Header" />
-                </div>
-            </div>
 
-            <div class="row mb-2">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="Yayın Durumu:" />
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Yayın Durumu:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenCheckBox @bind-Value="UpdateBlogModel.Status" />
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenCheckBox @bind-Value="UpdateBlogModel.Status" />
-                </div>
-            </div>
 
 
-            <div class="row mb-2">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="Kapak Fotoğrafı:" />
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Kapak Fotoğrafı:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
+                        @if (UpdateBlogModel.CoverImage != null)
+                        {
+                            @*<RadzenButton Variant="Variant.Text" Icon="delete" Click="args => UpdateBlogModel.CoverImage = null" />*@
+                            @*<RadzenButton Variant="Variant.Text" Icon="preview" Click=@(async args => await JSRuntime.InvokeAsync<object>("open", $"{Configuration.CoreConfiguration.StorageAPIPath}{UpdateBlogModel.CoverImage.Path}", "_blank" ))  />*@
+                            <RadzenLabel Text="@UpdateBlogModel.CoverImage.Name" />
+                        }
+                        <ValidationMessage For="() => UpdateBlogModel.CoverImage" />
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
-                    @if (UpdateBlogModel.CoverImage != null)
-                    {
-                        @*<RadzenButton Variant="Variant.Text" Icon="delete" Click="args => UpdateBlogModel.CoverImage = null" />*@
-                        @*<RadzenButton Variant="Variant.Text" Icon="preview" Click=@(async args => await JSRuntime.InvokeAsync<object>("open", $"{Configuration.CoreConfiguration.StorageAPIPath}{UpdateBlogModel.CoverImage.Path}", "_blank" ))  />*@
-                        <RadzenLabel Text="@UpdateBlogModel.CoverImage.Name" />
-                    }
-                    <ValidationMessage For="() => UpdateBlogModel.CoverImage" />
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="İçerik:" />
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="İçerik:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenHtmlEditor @bind-Value="UpdateBlogModel.Content" style="height: 30rem;" />
+                        <ValidationMessage For="() => UpdateBlogModel.Content" />
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenHtmlEditor @bind-Value="UpdateBlogModel.Content" style="height: 30rem;" />
-                    <ValidationMessage For="() => UpdateBlogModel.Content" />
-                </div>
-            </div>
 
-            <div class="row mt-3">
-                <div class="col-md-12">
-                    <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
-                    <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                        <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                    </div>
                 </div>
-            </div>
 
-        </EditForm>
-    }
+            </EditForm>
+        }
+    </Loading>
 </AuthorizeArea>
 
 @code {
@@ -71,6 +73,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoading = true;
+
         var result = await BlogService.GetAsync<BlogModel>((Guid)BlogId);
 
         if (result.Data == null)
@@ -81,6 +85,7 @@
 
         UpdateBlogModel = Mapper.Map<UpdateBlogModel>(result.Data);
 
+        IsLoading = false;
     }
 
     private async Task OpenFileDialogAsync()

@@ -9,6 +9,7 @@ namespace GameStore.Cms.Models.Rest.Identity
     public class CurrentUser
     {
         public Guid? Id { get; set; }
+        public string Key { get; set; }
         public string Name { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }

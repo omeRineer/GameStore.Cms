@@ -1,0 +1,38 @@
+﻿@inherits BaseDialog
+
+@inject Meta.NotificationService MetaNotificationService
+
+<AuthorizeArea Policy="@Policies.Notification">
+    <Loading IsLoading="IsLoading">
+        @if (NotificationDetailModel != null)
+        {
+            <p>
+                @((MarkupString) NotificationDetailModel.Content)
+            </p>
+        }
+    </Loading>
+</AuthorizeArea>
+
+@code {
+    [Parameter] public NotificationModel Notification { get; set; }
+
+    private GetNotificationDetailModel? NotificationDetailModel;
+    private bool IsLoading { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        var getNotificationResult = await MetaNotificationService.ReadAsync<GetNotificationDetailModel>(Notification.Id);
+
+        if (getNotificationResult.Success)
+            Notification.IsRead = true;
+
+        NotificationDetailModel = getNotificationResult.Data;
+
+        IsLoading = false;
+
+        NotificationStorage.ForceChanged();
+    }
+
+}

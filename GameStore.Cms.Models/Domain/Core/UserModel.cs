@@ -10,6 +10,7 @@ namespace GameStore.Cms.Models.Domain.Core
     public class UserModel
     {
         public Guid Id { get; set; }
+        public string Key { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }

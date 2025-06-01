@@ -11,7 +11,9 @@
         {
             @foreach (var notification in Notifications.OrderByDescending(o => o.CreateDate))
             {
-                <div @key="notification.Id" @onclick="async args => await GetDetailAsync(notification)" class="notice notice-@GetColor(notification.Type) animate-slide-in">
+                <div class="notice notice-@GetColor(notification.Level) animate-slide-in" @key="notification.Id" @onclick='async args => await DialogService.OpenAsync<NotificationDetailPage>(notification.Title,
+                                                                                                                                        new Dictionary<string, object> { { "Notification", notification } },
+                                                                                                                                        new DialogOptions{Width = "700px"})' >
                     <div class="d-flex align-items-start">
                         @if (!notification.IsRead)
                         {
@@ -29,7 +31,7 @@
                         </div>
                     }
                     <div class="d-flex flex-column align-items-end ms-3">
-                        <span class="small text-muted mb-1">@notification.CreateDate.ToString("g")</span>
+                        <span class="small text-muted mb-1">@(notification.CreateDate.Date == DateTime.Now.Date ? notification.CreateDate.ToString("HH:mm") : notification.CreateDate.ToString("g"))</span>
                     </div>
                 </div>
             }
@@ -150,16 +152,6 @@
     private List<NotificationModel> Notifications;
     private CurrentUser? CurrentUser;
 
-    async Task GetDetailAsync(NotificationModel notification)
-    {
-        var getNotificationResult = await MetaNotificationService.ReadAsync<GetNotificationDetailModel>(notification.Id);
-
-        if (getNotificationResult.Success)
-            notification.IsRead = true;
-
-        NotificationStorage.ForceChanged();
-    }
-
     protected override async Task OnParametersSetAsync()
     {
         await UpdateNotificationsAsync();
@@ -181,8 +173,12 @@
                 Notifications = NotificationStorage.Notifications.ToList();
                 break;
 
+            case "system":
+                Notifications = NotificationStorage.Notifications.Where(f => f.Type == "system").ToList();
+                break;
+
             case "sent":
-                Notifications = NotificationStorage.Notifications.Where(f => f.Sender == CurrentUser.Id).ToList();
+                Notifications = NotificationStorage.Notifications.Where(f => f.Sender == CurrentUser.Id.ToString()).ToList();
                 break;
 
             case "unreads":
@@ -208,15 +204,7 @@
 
     string GetColor(string type)
     {
-        return type switch
-        {
-            "error" => "danger",
-            "info" => "info",
-            "warning" => "warning",
-            "success" => "success",
-
-            _ => "secondary"
-        };
+        return Lookups.NotificationTypes[type];
     }
 
 }

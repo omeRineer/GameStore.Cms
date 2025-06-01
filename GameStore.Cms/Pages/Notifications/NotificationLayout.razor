@@ -27,9 +27,9 @@
             <li>
                 <NavLink href="/notifications/system" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
                     <span>⚙️ Sistem Mesajları</span>
-                    @if (NotificationStorage.Notifications.Any(f => !f.IsRead))
+                    @if (NotificationStorage.Notifications.Any(f => f.Type == "system" && !f.IsRead))
                     {
-                        <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => !c.IsRead)</span>
+                        <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => c.Type == "system" && !c.IsRead)</span>
                     }
 
                 </NavLink>
@@ -45,9 +45,9 @@
                 </NavLink>
             </li>
             <li>
-                <NavLink href="/notifications/send" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
+                <div class="menu-item d-flex justify-content-between align-items-center">
                     <span>📨 Bildirim Gönder</span>
-                </NavLink>
+                </div>
             </li>
         </ul>
     </aside>
@@ -113,7 +113,6 @@
         overflow-y: auto;
         height: 100%;
     }
-
 </style>
 
 @code {

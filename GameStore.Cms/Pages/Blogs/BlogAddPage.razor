@@ -3,61 +3,63 @@
 @inject BlogService BlogService
 
 <AuthorizeArea Policy="@Policies.Blog">
-    <EditForm Model="newBlog" OnValidSubmit="SaveAsync">
-        <DataAnnotationsValidator />
+    <Loading IsLoading="IsLoading">
+        <EditForm Model="newBlog" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
 
-        <div class="row mb-2">
-            <div class="col-md-2 align-items-center d-flex">
-                <RadzenLabel Text="Başlık:" />
+            <div class="row mb-2">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="Başlık:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenTextBox class="w-100" @bind-Value="newBlog.Header" />
+                    <ValidationMessage For="() => newBlog.Header" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenTextBox class="w-100" @bind-Value="newBlog.Header" />
-                <ValidationMessage For="() => newBlog.Header" />
-            </div>
-        </div>
 
-        <div class="row mb-2">
-            <div class="col-md-2 align-items-center d-flex">
-                <RadzenLabel Text="Yayın Durumu:" />
+            <div class="row mb-2">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="Yayın Durumu:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenCheckBox @bind-Value="newBlog.Status" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenCheckBox @bind-Value="newBlog.Status" />
-            </div>
-        </div>
 
-        <div class="row mb-2">
-            <div class="col-md-2 align-items-center d-flex">
-                <RadzenLabel Text="Kapak Fotoğrafı:" />
+            <div class="row mb-2">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="Kapak Fotoğrafı:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
+                    @if (newBlog.CoverImage != null)
+                    {
+                        @*<RadzenLink Icon="preview" Target="_blank" Path="@($"{CmsConfiguration.StorageAPIPath}{newBlog.CoverImage.Path}")" />*@
+                        <RadzenLabel Text="@newBlog.CoverImage.Name" />
+                    }
+                    <ValidationMessage For="() => newBlog.CoverImage" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
-                @if (newBlog.CoverImage != null)
-                {
-                    @*<RadzenLink Icon="preview" Target="_blank" Path="@($"{CmsConfiguration.StorageAPIPath}{newBlog.CoverImage.Path}")" />*@
-                    <RadzenLabel Text="@newBlog.CoverImage.Name" />
-                }
-                <ValidationMessage For="() => newBlog.CoverImage" />
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-2 align-items-center d-flex">
-                <RadzenLabel Text="İçerik:" />
+            <div class="row">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="İçerik:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenHtmlEditor @bind-Value="newBlog.Content" style="height: 300px;" />
+                    <ValidationMessage For="() => newBlog.Content" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenHtmlEditor @bind-Value="newBlog.Content" style="height: 300px;" />
-                <ValidationMessage For="() => newBlog.Content" />
-            </div>
-        </div>
 
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
-                <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                    <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                </div>
             </div>
-        </div>
 
-    </EditForm>
+        </EditForm>
+    </Loading>
 </AuthorizeArea>
 
 @code {

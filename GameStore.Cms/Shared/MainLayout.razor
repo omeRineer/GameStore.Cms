@@ -52,13 +52,15 @@
                                                                                              NotificationStorage.Add(new NotificationModel
                                                                                                                  {
                                                                                                                     Id = message.Id,
+                                                                                                                    Type = message.Type,
                                                                                                                     Content=message.Content,
                                                                                                                     ContentType = message.ContentType,
-                                                                                                                    Type = message.Type,
+                                                                                                                    Level = message.Level,
                                                                                                                     Sender = message.Sender,
                                                                                                                     Title = message.Title,
                                                                                                                     IsRead = message.IsRead,
-                                                                                                                    CreateDate = message.CreateDate
+                                                                                                                    CreateDate = message.CreateDate,
+                                                                                                                    Custom = message.Custom
                                                                                                                  });
                                                                                          }
                                                                                      }
