@@ -11,8 +11,10 @@ namespace GameStore.Cms.Models.Rest.SliderContent
         [Required]
         public int SliderTypeId { get; set; }
 
+        [MaxLength(30)]
         public string? Header { get; set; }
 
+        [MaxLength(100)]
         public string? To { get; set; }
 
         [Required]

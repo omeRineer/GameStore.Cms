@@ -15,9 +15,9 @@
 
         @if (SelectedItem != null)
         {
-            <RadzenButton Icon="collections" Click=@(async args => await DialogService.OpenAsync<GameGalleryPage>("Galeri",
+            @*<RadzenButton Icon="collections" Click=@(async args => await DialogService.OpenAsync<GameGalleryPage>("Galeri",
                       new Dictionary<string, object> { { "GameId", SelectedItem.Id } },
-                      new DialogOptions{Width = "800px"} )) />
+                      new DialogOptions{Width = "800px"} )) />*@
             <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<GameUpdatePage>("Oyun Düzenle",
                                               new Dictionary<string, object> { { "GameId", SelectedItem.Id } },
                                               new DialogOptions{Width = "800px"})) />

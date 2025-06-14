@@ -1,0 +1,148 @@
+﻿@page "/profile"
+@attribute [Authorize]
+@inject ProfileService ProfileService
+
+<Loading IsLoading="IsLoading">
+    @if (profileModel != null)
+    {
+        <EditForm Model="profileModel" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
+            <div class="row">
+                <div class="col-md-12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-4">
+                    <RadzenCard Variant="@Variant.Filled">
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" class="rz-p-4">
+                            <RadzenImage Path="https://t4.ftcdn.net/jpg/03/83/25/83/360_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg" Style="width: 100px; height: 100px; border-radius: 50%;" />
+                            <RadzenStack Gap="0">
+                                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">İsim</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@($"{profileModel.FirstName} {profileModel.LastName}")</b></RadzenText>
+                                @*<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Company</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@order?.Customer?.CompanyName</b></RadzenText>*@
+                            </RadzenStack>
+                        </RadzenStack>
+                    </RadzenCard>
+                </div>
+
+                <div class="col-md-8">
+                    <RadzenCard>
+                        <div class="row mb-2">
+                            <div class="col-md-2 align-items-center d-flex">
+                                <RadzenLabel Text="İsim:" />
+                            </div>
+                            <div class="col-md-10">
+                                <RadzenTextBox class="w-100" @bind-Value="profileModel.FirstName" />
+                                <ValidationMessage For="() => profileModel.FirstName" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2 align-items-center d-flex">
+                                <RadzenLabel Text="Soy İsim:" />
+                            </div>
+                            <div class="col-md-10">
+                                <RadzenTextBox class="w-100" @bind-Value="profileModel.LastName" />
+                                <ValidationMessage For="() => profileModel.LastName" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2 align-items-center d-flex">
+                                <RadzenLabel Text="Telefon:" />
+                            </div>
+                            <div class="col-md-10">
+                                <RadzenTextBox MaxLength="11" class="w-100" @bind-Value="profileModel.Phone" />
+                                <ValidationMessage For="() => profileModel.Phone" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2 align-items-center d-flex">
+                                <RadzenLabel Text="Email:" />
+                            </div>
+                            <div class="col-md-10">
+                                <RadzenTextBox class="w-100" @bind-Value="profileModel.Email" />
+                                <ValidationMessage For="() => profileModel.Email" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2 align-items-center d-flex">
+                                <RadzenLabel Text="Kullanıcı Adı:" />
+                            </div>
+                            <div class="col-md-10">
+                                <RadzenTextBox class="w-100" @bind-Value="profileModel.UserName" />
+                                <ValidationMessage For="() => profileModel.UserName" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2 align-items-center d-flex">
+                                <RadzenLabel Text="Parola:" />
+                            </div>
+                            <div class="col-md-10">
+                                <RadzenTextBox class="w-100" @bind-Value="profileModel.Password" />
+                                <ValidationMessage For="() => profileModel.Password" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2 align-items-center d-flex">
+                                <RadzenLabel Text="Doğum Tarihi:" />
+                            </div>
+                            <div class="col-md-10">
+                                <RadzenDatePicker class="w-100" @bind-Value="profileModel.BirthdayDate" />
+                                <ValidationMessage For="() => profileModel.BirthdayDate" />
+                            </div>
+                        </div>
+                    </RadzenCard>
+                </div>
+            </div>
+        </EditForm>
+    }
+</Loading>
+
+@code {
+    UpdateProfileModel profileModel;
+    bool IsLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        var result = await ProfileService.GetAsync();
+
+        if (result.Data == null)
+        {
+            NotificationService.Error(result.Message);
+            return;
+        }
+
+        profileModel = Mapper.Map<UpdateProfileModel>(result.Data);
+
+        IsLoading = false;
+
+    }
+
+    private async Task SaveAsync()
+    {
+        IsLoading = true;
+
+        var result = await ProfileService.UpdateAsync(model : profileModel);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(DialogResult.Refresh);
+        }
+
+        IsLoading = false;
+    }
+}

@@ -2,36 +2,50 @@
 
 <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
     <RadzenPanelMenu>
-        @if (menuListModel?.Menus != null && menuListModel?.Menus.Count() > 0)
-        {
-            @foreach (var menuItem in menuListModel.Menus.Where(f => f.ParentMenuId == null).OrderBy(o => o.Priority).ToList())
+        <Loading IsLoading="IsLoading">
+
+            <RadzenPanelMenuItem Text="Dashboard"
+                                 Icon="dashboard"
+                                 Click=@(args=> { NavigationManager.NavigateTo("/"); }) />
+
+            @if (menuListModel?.Menus != null && menuListModel?.Menus.Count() > 0)
             {
-                <RadzenPanelMenuItem Text="@($"{menuItem.Code} {menuItem.Title}")"
-                                     Icon="@menuItem.Icon"
-                                     Click=@(args=> { Navigate(menuItem); })>
+                @foreach (var menuItem in menuListModel.Menus.Where(f => f.ParentMenuId == null).OrderBy(o => o.Priority).ToList())
+                {
+                    <RadzenPanelMenuItem Text="@($"{menuItem.Code} {menuItem.Title}")"
+                                         Icon="@menuItem.Icon"
+                                         Click=@(args=> { Navigate(menuItem); })>
 
-                    @if (menuListModel.Menus.Any(e => e.ParentMenuId == menuItem.Id))
-                    {
-                        @foreach (var childMenuItem in menuListModel.Menus.Where(f => f.ParentMenuId == menuItem.Id).OrderBy(o => o.Priority).ToList())
+                        @if (menuListModel.Menus.Any(e => e.ParentMenuId == menuItem.Id))
                         {
-                            <RadzenPanelMenuItem Click=@(args=> { Navigate(childMenuItem); })
-                                                 Text="@($"{childMenuItem.Code} {childMenuItem.Title}")"
-                                                 Icon="@childMenuItem.Icon"></RadzenPanelMenuItem>
+                            @foreach (var childMenuItem in menuListModel.Menus.Where(f => f.ParentMenuId == menuItem.Id).OrderBy(o => o.Priority).ToList())
+                            {
+                                <RadzenPanelMenuItem Click=@(args=> { Navigate(childMenuItem); })
+                                                     Text="@($"{childMenuItem.Code} {childMenuItem.Title}")"
+                                                     Icon="@childMenuItem.Icon"></RadzenPanelMenuItem>
+                            }
                         }
-                    }
 
-                </RadzenPanelMenuItem>
+                    </RadzenPanelMenuItem>
+                }
             }
-        }
+
+            <RadzenPanelMenuItem Text="Profil Bilgileri"
+                                 Icon="manage_accounts"
+                                 Click=@(args=> { NavigationManager.NavigateTo("/profile"); }) />
+        </Loading>
     </RadzenPanelMenu>
 </RadzenSidebar>
 
 @code {
     bool sidebar1Expanded = true;
     GetMenusModel? menuListModel;
+    bool IsLoading = false;
 
     protected async override Task OnInitializedAsync()
     {
+        IsLoading = true;
+
         var user = await CurrentUserService.GetCurrentUserAsync();
         if (!user.IsAuthenticated)
             return;
@@ -40,6 +54,8 @@
 
         if (result.Success)
             menuListModel = result.Data;
+
+        IsLoading = false;
 
     }
 

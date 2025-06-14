@@ -5,12 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Cms.Models.Rest.Identity.User
+namespace GameStore.Cms.Models.Rest.Identity.Profile
 {
-    public class UpdateUserModel
+    public class UpdateProfileModel
     {
-        public Guid Id { get; set; }
-
         [Required]
         [MinLength(3)]
         [MaxLength(30)]

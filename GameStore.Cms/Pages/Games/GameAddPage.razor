@@ -4,86 +4,88 @@
 @inject GameService GameService
 
 <AuthorizeArea Policy="@Policies.Game">
-    <EditForm Model="newGame" OnValidSubmit="SaveAsync">
-        <DataAnnotationsValidator />
+    <Loading IsLoading="IsLoading">
+        <EditForm Model="newGame" OnValidSubmit="SaveAsync">
+            <DataAnnotationsValidator />
 
-        <div class="row mb-2">
-            <div class="col-md-2">
-                <RadzenLabel Text="Oyun Adı:" />
+            <div class="row mb-2">
+                <div class="col-md-2">
+                    <RadzenLabel Text="Oyun Adı:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenTextBox class="w-100" @bind-Value="newGame.Name" />
+                    <ValidationMessage For="() => newGame.Name" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenTextBox class="w-100" @bind-Value="newGame.Name" />
-                <ValidationMessage For="() => newGame.Name" />
-            </div>
-        </div>
 
-        <div class="row mb-2">
-            <div class="col-md-2">
-                <RadzenLabel Text="Kategori:" />
+            <div class="row mb-2">
+                <div class="col-md-2">
+                    <RadzenLabel Text="Kategori:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenDropDown Data="categories"
+                                    TValue="Guid"
+                                    @bind-Value="newGame.CategoryId"
+                                    TextProperty="Value"
+                                    ValueProperty="Key"
+                                    class="w-100" />
+                    <ValidationMessage For="() => newGame.CategoryId" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenDropDown Data="categories"
-                                TValue="Guid"
-                                @bind-Value="newGame.CategoryId"
-                                TextProperty="Value"
-                                ValueProperty="Key"
-                                class="w-100" />
-                <ValidationMessage For="() => newGame.CategoryId" />
-            </div>
-        </div>
 
-        <!--<div class="row mb-2">
-            <div class="col-md-2 align-items-center d-flex">
-                <RadzenLabel Text="Kapak Resmi:" />
-            </div>
-            <div class="col-md-10">
-                <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
-                @if (newGame.CoverImage != null)
-                {-->
-                    @*<RadzenLink Icon="preview" Target="_blank" Path="@($"{Configuration.CoreConfiguration.StorageAPIPath}{newGame.CoverImage.Path}")" />*@
-                    <!--<RadzenLabel Text="@newGame.CoverImage.Name" />
-                }
-                <ValidationMessage For="() => newGame.CoverImage" />
-            </div>
-        </div>-->
+            <!--<div class="row mb-2">
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenLabel Text="Kapak Resmi:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
+                    @if (newGame.CoverImage != null)
+                    {-->
+                        @*<RadzenLink Icon="preview" Target="_blank" Path="@($"{Configuration.CoreConfiguration.StorageAPIPath}{newGame.CoverImage.Path}")" />*@
+                        <!--<RadzenLabel Text="@newGame.CoverImage.Name" />
+                    }
+                    <ValidationMessage For="() => newGame.CoverImage" />
+                </div>
+            </div>-->
 
-        <div class="row mb-2">
-            <div class="col-md-2">
-                <RadzenLabel Text="Fiyat:" />
+            <div class="row mb-2">
+                <div class="col-md-2">
+                    <RadzenLabel Text="Fiyat:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenNumeric class="w-100" TValue="decimal" @bind-Value="newGame.Price" />
+                    <ValidationMessage For="() => newGame.Price" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenNumeric class="w-100" TValue="decimal" @bind-Value="newGame.Price" />
-                <ValidationMessage For="() => newGame.Price" />
-            </div>
-        </div>
 
-        <div class="row mb-2">
-            <div class="col-md-2">
-                <RadzenLabel Text="Açıklama:" />
+            <div class="row mb-2">
+                <div class="col-md-2">
+                    <RadzenLabel Text="Açıklama:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenTextArea Rows="5" class="w-100" @bind-Value="newGame.Description" />
+                    <ValidationMessage For="() => newGame.Description" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenTextArea Rows="5" class="w-100" @bind-Value="newGame.Description" />
-                <ValidationMessage For="() => newGame.Description" />
-            </div>
-        </div>
 
-        <div class="row mb-2">
-            <div class="col-md-2">
-                <RadzenLabel Text="Yayın Tarihi:" />
+            <div class="row mb-2">
+                <div class="col-md-2">
+                    <RadzenLabel Text="Yayın Tarihi:" />
+                </div>
+                <div class="col-md-10">
+                    <RadzenDatePicker class="w-100" TValue="DateTime" @bind-Value="newGame.ReleaseDate" DateFormat="dd.MM.yyyy HH:mm" />
+                    <ValidationMessage For="() => newGame.ReleaseDate" />
+                </div>
             </div>
-            <div class="col-md-10">
-                <RadzenDatePicker class="w-100" TValue="DateTime" @bind-Value="newGame.ReleaseDate" DateFormat="dd.MM.yyyy HH:mm" />
-                <ValidationMessage For="() => newGame.ReleaseDate" />
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
-                <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+            <div class="row">
+                <div class="col-md-12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                    <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                </div>
             </div>
-        </div>
-    </EditForm>
+        </EditForm>
+    </Loading>
 </AuthorizeArea>
 
 @code {
@@ -92,12 +94,14 @@
 
     protected async override Task OnInitializedAsync()
     {
+        IsLoading = true;
+
         categories = (await CategoryODataService.GetListAsync(new ODataRequestParams
         {
             Select = "Id,Name"
         })).Value.ToDictionary(k => k.Id, v => v.Name);
 
-
+        IsLoading = false;
     }
 
     async Task SaveAsync()

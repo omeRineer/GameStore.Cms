@@ -5,6 +5,7 @@ using GameStore.Cms.Models.Rest.Blog;
 using GameStore.Cms.Models.Rest.Category;
 using GameStore.Cms.Models.Rest.Game;
 using GameStore.Cms.Models.Rest.Identity.Permission;
+using GameStore.Cms.Models.Rest.Identity.Profile;
 using GameStore.Cms.Models.Rest.Identity.Role;
 using GameStore.Cms.Models.Rest.Identity.User;
 using GameStore.Cms.Models.Rest.Menu;
@@ -38,6 +39,7 @@ namespace GameStore.Cms.Extensions
             services.AddScoped<MenuService>();
             services.AddScoped<BlogService>();
             services.AddScoped<AuthService>();
+            services.AddScoped<ProfileService>();
 
             services.AddScoped<UserService>();
             services.AddScoped<RoleService>();
@@ -93,6 +95,7 @@ namespace GameStore.Cms.Extensions
                 opt.CreateMap<RoleModel, UpdateRoleModel>();
                 opt.CreateMap<PermissionModel, UpdatePermissionModel>();
                 opt.CreateMap<MenuModel, UpdateMenuModel>();
+                opt.CreateMap<ProfileModel, UpdateProfileModel>();
 
                 opt.AddGlobalIgnore("CreateDate");
                 opt.AddGlobalIgnore("EditDate");

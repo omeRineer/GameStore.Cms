@@ -13,12 +13,12 @@ namespace GameStore.Cms.Models.Rest.Game
         [MaxLength(40)]
         public string Name { get; set; }
 
+        [MaxLength(500)]
         public string? Description { get; set; }
 
         [Required]
         public decimal Price { get; set; }
 
-        [Required]
         public DateTime ReleaseDate { get; set; }
 
         [Required]

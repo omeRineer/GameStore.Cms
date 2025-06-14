@@ -6,6 +6,8 @@ namespace GameStore.Cms.Models.Rest.Blog
     public class CreateBlogModel
     {
         [Required]
+        [MinLength(10)]
+        [MaxLength(50)]
         public string Header { get; set; }
 
         [Required]

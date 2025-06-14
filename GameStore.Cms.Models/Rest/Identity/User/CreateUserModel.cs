@@ -10,21 +10,30 @@ namespace GameStore.Cms.Models.Rest.Identity.User
     public class CreateUserModel
     {
         [Required]
+        [MinLength(3)]
+        [MaxLength(30)]
         public string FirstName { get; set; }
 
         [Required]
+        [MaxLength(30)]
         public string LastName { get; set; }
 
         [Required]
+        [MinLength(3)]
+        [MaxLength(20)]
         public string UserName { get; set; }
 
         [Required]
+        [MinLength(6)]
+        [MaxLength(20)]
         public string Password { get; set; }
 
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]
+        [Phone]
         public string Phone { get; set; }
 
         [Required]

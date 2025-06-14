@@ -3,50 +3,52 @@
 @inject RoleService RoleService
 
 <AuthorizeArea Policy="@Policies.Identity">
-    @if (UpdateRoleModel != null)
-    {
-        <EditForm Model="UpdateRoleModel" OnValidSubmit="SaveAsync">
-            <DataAnnotationsValidator />
+    <Loading IsLoading="IsLoading">
+        @if (UpdateRoleModel != null)
+        {
+            <EditForm Model="UpdateRoleModel" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
 
-            <div class="row mb-2">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="Key:" />
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Key:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenTextBox class="w-100" @bind-Value="UpdateRoleModel.Key" />
+                        <ValidationMessage For="() => UpdateRoleModel.Key" />
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenTextBox class="w-100" @bind-Value="UpdateRoleModel.Key" />
-                    <ValidationMessage For="() => UpdateRoleModel.Key" />
-                </div>
-            </div>
 
-            <div class="row mb-2">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="Title:" />
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Title:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenTextBox class="w-100" @bind-Value="UpdateRoleModel.Name" />
+                        <ValidationMessage For="() => UpdateRoleModel.Name" />
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenTextBox class="w-100" @bind-Value="UpdateRoleModel.Name" />
-                    <ValidationMessage For="() => UpdateRoleModel.Name" />
-                </div>
-            </div>
 
-            <div class="row mb-2">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="Açıklama:" />
+                <div class="row mb-2">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text="Açıklama:" />
+                    </div>
+                    <div class="col-md-10">
+                        <RadzenTextArea Rows="7" class="w-100" @bind-Value="UpdateRoleModel.Description" />
+                        <ValidationMessage For="() => UpdateRoleModel.Description" />
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenTextArea Rows="7" class="w-100" @bind-Value="UpdateRoleModel.Description" />
-                    <ValidationMessage For="() => UpdateRoleModel.Description" />
-                </div>
-            </div>
 
-            <div class="row mt-3">
-                <div class="col-md-12">
-                    <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
-                    <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Kaydet" Style="margin-bottom: 10px; width: 150px" Visible="@(IsLoading == false)" />
+                        <RadzenButton Click="@((args) => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="İptal" Style="margin-bottom: 10px; width: 150px" />
+                    </div>
                 </div>
-            </div>
 
-        </EditForm>
-    }
+            </EditForm>
+        }
+    </Loading>
 </AuthorizeArea>
 
 
@@ -56,6 +58,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoading = true;
+
         var result = await RoleService.GetAsync<RoleModel>((Guid)RoleId);
 
         if (result.Data == null)
@@ -66,6 +70,7 @@
 
         UpdateRoleModel = Mapper.Map<UpdateRoleModel>(result.Data);
 
+        IsLoading = false;
     }
 
 

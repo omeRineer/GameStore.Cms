@@ -8,6 +8,8 @@ namespace GameStore.Cms.Models.Rest.Blog
         public Guid Id { get; set; }
 
         [Required]
+        [MinLength(10)]
+        [MaxLength(50)]
         public string Header { get; set; }
 
         [Required]

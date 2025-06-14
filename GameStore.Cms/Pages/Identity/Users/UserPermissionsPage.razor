@@ -3,25 +3,27 @@
 @inject PermissionODataService PermissionODataService
 
 <AuthorizeArea Policy="@Policies.Identity">
-    <div class="row">
-        <div class="col-md-9">
-            <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                           FilterOperator="StringFilterOperator.Contains"
-                           AllowFiltering="true"
-                           @bind-Value=@SetUserPermissionsModel.Permissions
-                           TextProperty="Key"
-                           ValueProperty="Id"
-                           Data="@Permissions"
-                           Multiple=true
-                           AllowClear=true
-                           Placeholder="Arama"
-                           Style="width: 100%; height:400px" />
+    <Loading IsLoading="IsLoading">
+        <div class="row">
+            <div class="col-md-9">
+                <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                               FilterOperator="StringFilterOperator.Contains"
+                               AllowFiltering="true"
+                               @bind-Value=@SetUserPermissionsModel.Permissions
+                               TextProperty="Key"
+                               ValueProperty="Id"
+                               Data="@Permissions"
+                               Multiple=true
+                               AllowClear=true
+                               Placeholder="Arama"
+                               Style="width: 100%; height:400px" />
 
+            </div>
+            <div class="col-md-3">
+                <RadzenButton Text="Kaydet" Click="async args=> await SetUserPermissionsAsync()" Style="margin-bottom: 10px; width: 100%" Visible="@(IsLoading == false)" />
+            </div>
         </div>
-        <div class="col-md-3">
-            <RadzenButton Text="Kaydet" Click="async args=> await SetUserPermissionsAsync()" Style="margin-bottom: 10px; width: 100%" Visible="@(IsLoading == false)" />
-        </div>
-    </div>
+    </Loading>
 </AuthorizeArea>
 
 @code {

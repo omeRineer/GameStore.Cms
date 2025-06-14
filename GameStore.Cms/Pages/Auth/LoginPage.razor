@@ -7,33 +7,39 @@
 <PageTitle>GameStore Dashboard</PageTitle>
 
 <RadzenCard Style="max-width: 400px; margin: 100px auto; padding: 30px;">
-    <h3 class="mb-4">Giriş Yap</h3>
+    <Loading IsLoading="IsLoading">
+        <h3 class="mb-4">Giriş Yap</h3>
 
-    <RadzenTemplateForm Data="@LoginModel" TItem="UserLoginModel" Submit="@HandleAsync">
-        <div class="mb-3">
-            <RadzenLabel Text="Kullanıcı Adı" Component="Username" />
-            <RadzenTextBox @bind-Value="LoginModel.UserName" Name="Username" Style="width: 100%;" />
-        </div>
+        <RadzenTemplateForm Data="@LoginModel" TItem="UserLoginModel" Submit="@HandleAsync">
+            <div class="mb-3">
+                <RadzenLabel Text="Kullanıcı Adı" Component="Username" />
+                <RadzenTextBox @bind-Value="LoginModel.UserName" Name="Username" Style="width: 100%;" />
+            </div>
 
-        <div class="mb-3">
-            <RadzenLabel Text="Şifre" Component="Password" />
-            <RadzenPassword @bind-Value="LoginModel.Password" Name="Password" Style="width: 100%;" />
-        </div>
+            <div class="mb-3">
+                <RadzenLabel Text="Şifre" Component="Password" />
+                <RadzenPassword @bind-Value="LoginModel.Password" Name="Password" Style="width: 100%;" />
+            </div>
 
-        <RadzenButton ButtonType="ButtonType.Submit" Text="Giriş Yap" Style="width: 100%;"
-                      Icon="login" Class="mt-3" />
-    </RadzenTemplateForm>
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Giriş Yap" Style="width: 100%;"
+                          Icon="login" Class="mt-3" />
+        </RadzenTemplateForm>
+    </Loading>
 </RadzenCard>
 
 @code {
     UserLoginModel LoginModel = new();
+    bool IsLoading = false;
 
     private async Task HandleAsync()
     {
+        IsLoading = true;
+
         var result = await AuthService.LoginAsync(LoginModel);
 
         if (!result.Success)
         {
+            IsLoading = false;
             NotificationService.Error(result.Message);
             return;
         }
@@ -43,5 +49,7 @@
         await AuthenticationProvider.GetAuthenticationStateAsync();
 
         NavigationManager.NavigateTo("/", true);
+
+        IsLoading = false;
     }
 }
