@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-
 @implements IDisposable
 
 <RadzenComponents />
@@ -35,13 +34,12 @@
     {
         User = await CurrentUserService.GetCurrentUserAsync();
 
-
-        if (User.IsAuthenticated)
+        var notificationApiKey = "Notification-Api-Key";
+        if (User.IsAuthenticated && (User.Claims != null && User.Claims.ContainsKey(notificationApiKey)))
         {
             NotificationStorage.OnChanged += OnNotificationChanged;
             await NotificationStorage.LoadAsync();
 
-            var token = await LocalStorageService.GetItemAsStringAsync("AUTH_TOKEN");
             var notificationHub = HubConnectionProvider.CreateConnection<ReceiveNotificationModel>("/hubs/notifications",
                                                                                  new Dictionary<string, Action<ReceiveNotificationModel>>
                                                                                  {
@@ -64,7 +62,8 @@
                                                                                                                  });
                                                                                          }
                                                                                      }
-                                                                                     }, token);
+                                                                                         }, new() { { notificationApiKey, User.Claims[notificationApiKey] } });
+
             await notificationHub.StartAsync();
         }
     }
@@ -75,6 +74,7 @@
 
         NavigationManager.NavigateTo("/login", true);
     }
+
     private async void OnNotificationChanged()
     {
         await InvokeAsync(StateHasChanged);

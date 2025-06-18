@@ -1,0 +1,102 @@
+﻿@inherits BaseDialog
+@inject UserService UserService
+
+<AuthorizeArea Policy="@Policies.Identity">
+    <Loading IsLoading="IsLoading">
+        <div class="row mb-2">
+            <div class="col-md-3">
+                <RadzenButton Icon="add" Click="AddProperty" />
+                <RadzenButton Icon="delete" Click="(args =>
+                                           {
+                                               Claims?.Clear();
+                                           })" />
+            </div>
+        </div>
+
+        <RadzenCard Variant="@Variant.Filled" class="mb-1">
+            @if (Claims.Count > 0)
+            {
+                @foreach (var claim in Claims)
+                {
+                    <div class="row mb-2">
+                        <div class="col-md-5">
+                            <RadzenTextBox class="w-100"
+                                           Placeholder="Type"
+                                           @bind-Value="claim.Key" />
+                        </div>
+                        <div class="col-md-5">
+                            <RadzenTextBox class="w-100"
+                                           Placeholder="Value"
+                                           @bind-Value="claim.Value" />
+                        </div>
+                        <div class="col-md-2">
+
+                            <RadzenButton Icon="remove" Click="(args=>
+                                             {
+                                                 Claims.Remove(claim);
+                                             })" />
+
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <NoData />
+            }
+        </RadzenCard>
+
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <RadzenButton Click="@SetUserClaimsAsync"
+                              Text="Kaydet"
+                              Style="margin-bottom: 10px; width: 150px" />
+            </div>
+        </div>
+    </Loading>
+</AuthorizeArea>
+
+
+@code {
+    [Parameter] public ODataUser User { get; set; }
+    List<BaseModel.ClaimInput> Claims = new();
+
+    SetUserClaimsModel SetUserClaimsModel = new SetUserClaimsModel();
+
+    protected async override Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        var userClaimsResult = await UserService.GetClaimsAsync(User.Id);
+        if (userClaimsResult.Data != null)
+            Claims = userClaimsResult.Data.Claims?.Select(s => new BaseModel.ClaimInput { Key = s.Key, Value = s.Value }).ToList();
+
+        SetUserClaimsModel.UserId = User.Id;
+
+        IsLoading = false;
+    }
+
+    async Task SetUserClaimsAsync()
+    {
+        IsLoading = true;
+
+        SetUserClaimsModel.Claims = Claims?.ToDictionary(k => k.Key, v => v.Value);
+        var result = await UserService.SetClaimsAsync(SetUserClaimsModel);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(true);
+        }
+
+        IsLoading = false;
+    }
+
+    void AddProperty(MouseEventArgs args)
+    {
+        Claims.Add(new BaseModel.ClaimInput());
+    }
+}

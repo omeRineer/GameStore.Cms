@@ -23,10 +23,6 @@
             <RadzenButton Icon="key" Click=@(async args => await DialogService.OpenAsync<MenuPermissionsPage>(SelectedItem.Title,
                 new Dictionary<string, object> { { "Menu", SelectedItem } },
                 new DialogOptions{Width = "700px"})) />
-
-            <RadzenButton Icon="badge" Click=@(async args => await DialogService.OpenAsync<MenuRolesPage>(SelectedItem.Title,
-                new Dictionary<string, object> { { "Menu", SelectedItem } },
-                new DialogOptions{Width = "700px"})) />
         }
 
     </div>

@@ -8,6 +8,12 @@
                                  Icon="dashboard"
                                  Click=@(args=> { NavigationManager.NavigateTo("/"); }) />
 
+            <AuthorizeView Policy="@Policies.Notification">
+                <RadzenPanelMenuItem Text="Bildirimler"
+                                     Icon="notifications_active"
+                                     Click=@(args=> { NavigationManager.NavigateTo("/notifications/all"); }) />
+            </AuthorizeView>
+
             @if (menuListModel?.Menus != null && menuListModel?.Menus.Count() > 0)
             {
                 @foreach (var menuItem in menuListModel.Menus.Where(f => f.ParentMenuId == null).OrderBy(o => o.Priority).ToList())

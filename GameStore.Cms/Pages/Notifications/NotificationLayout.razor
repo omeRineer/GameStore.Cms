@@ -4,9 +4,6 @@
 
 @attribute [Authorize(Policies.Notification)]
 
-@inject Meta.NotificationService MetaNotificationService
-
-
 <div class="notification-layout">
     <aside class="notification-menu shadow-sm rounded-3">
         <ul>
@@ -56,7 +53,6 @@
         @Body
     </section>
 </div>
-
 
 <style>
     .notification-layout {
@@ -116,6 +112,8 @@
 </style>
 
 @code {
+
+
     protected override async Task OnInitializedAsync()
     {
         NotificationStorage.OnChanged += OnNotificationChanged;

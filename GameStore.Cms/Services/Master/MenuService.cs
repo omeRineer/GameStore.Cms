@@ -17,12 +17,5 @@ namespace GameStore.Cms.Services.Master
 
         public async Task<DataResponseModel<GetMenuPermissionsModel>> GetPermissionsAsync(Guid id)
             => await _httpClientService.GetAsync<DataResponseModel<GetMenuPermissionsModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetPermissions/{id}");
-
-        public async Task<ResponseModel> SetRolesAsync(SetMenuRolesModel model)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/SetRoles", model);
-
-        public async Task<DataResponseModel<GetMenuRolesModel>> GetRolesAsync(Guid id)
-            => await _httpClientService.GetAsync<DataResponseModel<GetMenuRolesModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetRoles/{id}");
-
     }
 }

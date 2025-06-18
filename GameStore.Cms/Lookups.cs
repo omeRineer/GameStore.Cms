@@ -16,5 +16,12 @@
             { "system", "system" },
             { "simple", "simple" }
         };
+
+        public static Dictionary<string, string> QueueMessageStatuses = new Dictionary<string, string>
+        {
+            { "Error", "danger" },
+            { "Success", "success" },
+            { "Processing", "warning" },
+        };
     }
 }

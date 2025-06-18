@@ -14,10 +14,10 @@ namespace GameStore.Cms.Services.Meta
         }
 
         public async Task<DataResponseModel<TModel>> GetListAsync<TModel>()
-            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Meta.ApiUrl}/Notifications");
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Meta.ApiUrl}/Notifications?Notification-Api-Key=lMmK9dnW8q7rs1krKw1m09_YpfgyisaBLi002F-3c5LnvPaLVGrM87pnQ917KsIs");
 
         public async Task<DataResponseModel<TModel>> ReadAsync<TModel>(Guid id)
-            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Meta.ApiUrl}/Notifications/{id}");
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Meta.ApiUrl}/Notifications/{id}?Notification-Api-Key=lMmK9dnW8q7rs1krKw1m09_YpfgyisaBLi002F-3c5LnvPaLVGrM87pnQ917KsIs");
 
     }
 }

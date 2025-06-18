@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using System.Web;
 
 namespace GameStore.Cms.Providers
 {
@@ -7,32 +8,18 @@ namespace GameStore.Cms.Providers
         Dictionary<string, HubConnection> Connections { get; } = new();
         public HubConnection CreateConnection<TMessage>(string path,
                                                         Dictionary<string, Action<TMessage>> events,
-                                                        string token = null,
-                                                        Func<Exception?, Task?> onStop = null)
+                                                        Dictionary<string, string> queryParams = null)
         {
+            var uri = GetUrl(path, queryParams);
+
             var hubConnection = new HubConnectionBuilder()
-            .WithUrl($"{CmsConfiguration.APIOptions.Meta.BaseUrl}{path}", opt =>
-            {
-                if (!string.IsNullOrEmpty(token))
-                    opt.AccessTokenProvider = async () => await Task.FromResult(token);
-            })
+            .WithUrl(uri)
             .WithAutomaticReconnect()
             .Build();
-
             #region Events
             foreach (var method in events)
                 hubConnection.On<TMessage>(method.Key, method.Value);
 
-            if (onStop != null)
-                hubConnection.Closed += onStop;
-
-            hubConnection.Closed += (exception) =>
-            {
-                if (Connections.ContainsKey(path))
-                    Connections.Remove(path);
-
-                return Task.CompletedTask;
-            };
             #endregion
 
             Connections[path] = hubConnection;
@@ -40,8 +27,24 @@ namespace GameStore.Cms.Providers
             return hubConnection;
         }
 
-        public HubConnection GetConnection(string path)
-            => Connections[path];
+        Uri GetUrl(string path, Dictionary<string, string>? queryParameters = null)
+        {
+            var urlBuilder = new UriBuilder($"{CmsConfiguration.APIOptions.Meta.BaseUrl}{path}");
+            var query = HttpUtility.ParseQueryString(urlBuilder.Query);
 
+            if (queryParameters != null)
+                foreach (var param in queryParameters)
+                    query[param.Key] = param.Value;
+
+            urlBuilder.Query = query.ToString();
+
+            return urlBuilder.Uri;
+        }
+
+        public HubConnection? GetSingleOrDefaultAsync(string path)
+            => Connections.SingleOrDefault(f => f.Key == path).Value;
+
+        public HubConnection GetSingleAsync(string path)
+            => Connections[path];
     }
 }

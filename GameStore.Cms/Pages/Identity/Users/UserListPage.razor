@@ -27,6 +27,10 @@
             <RadzenButton Icon="badge" Click=@(async args => await DialogService.OpenAsync<UserRolesPage>(SelectedItem.FirstName,
                             new Dictionary<string, object> { { "User", SelectedItem } },
                             new DialogOptions{Width = "700px"})) />
+
+            <RadzenButton Icon="assignment" Click=@(async args => await DialogService.OpenAsync<UserClaimsPage>(SelectedItem.FirstName,
+                new Dictionary<string, object> { { "User", SelectedItem } },
+                new DialogOptions{Width = "1000px"})) />
         }
 
 

@@ -28,5 +28,6 @@ namespace GameStore.Cms.Options.Models
     {
         public string ApiUrl { get; set; }
         public string BaseUrl { get; set; }
+        public string HubApiKey { get; set; }
     }
 }

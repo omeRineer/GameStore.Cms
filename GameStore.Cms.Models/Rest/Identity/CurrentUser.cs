@@ -15,6 +15,7 @@ namespace GameStore.Cms.Models.Rest.Identity
         public string? Email { get; set; }
         public string[]? Roles { get; set; }
         public string[]? Permissions { get; set; }
+        public Dictionary<string, string>? Claims { get; set; }
         public bool IsAuthenticated { get; set; }
     }
 }

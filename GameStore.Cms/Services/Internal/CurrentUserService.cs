@@ -2,6 +2,7 @@
 using GameStore.Cms.Models.Rest.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace GameStore.Cms.Services.Internal
 {
@@ -40,12 +41,16 @@ namespace GameStore.Cms.Services.Internal
             {
                 Id = Guid.Parse(claims.SingleOrDefault(f => f.Type == ClaimTypes.NameIdentifier).Value),
                 Name = claims.SingleOrDefault(f => f.Type == ClaimTypes.Name)?.Value,
+                Key = claims.FirstOrDefault(f => f.Type == "Key")?.Value,
                 Phone = claims.SingleOrDefault(f => f.Type == ClaimTypes.MobilePhone)?.Value,
                 Email = claims.SingleOrDefault(f => f.Type == ClaimTypes.Email)?.Value,
                 Roles = claims.Where(f => f.Type == ClaimTypes.Role).Select(s => s.Value).ToArray(),
                 Permissions = claims.Where(f => f.Type == "Permission").Select(s => s.Value).ToArray(),
                 IsAuthenticated = true
             };
+
+            CurrentUser.Claims = claims.Any(x => x.Type == "Special") ? JsonSerializer.Deserialize<Dictionary<string, string>>(claims.FirstOrDefault(f => f.Type == "Special")?.Value)
+                                                                      : new Dictionary<string, string>();
 
             return CurrentUser;
         }

@@ -16,5 +16,6 @@ namespace GameStore.Cms.Models.Enums
         public const string Identity = "Identity";
         public const string Menu = "Menu";
         public const string Notification = "Notification";
+        public const string Monitoring = "Monitoring";
     }
 }

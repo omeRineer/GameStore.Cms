@@ -21,5 +21,12 @@ namespace GameStore.Cms.Services.Master.Identity
         public async Task<DataResponseModel<GetUserRolesModel>> GetRolesAsync(Guid userId)
             => await _httpClientService.GetAsync<DataResponseModel<GetUserRolesModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetRoles/{userId}");
 
+
+        public async Task<ResponseModel> SetClaimsAsync(SetUserClaimsModel model)
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/SetClaims", model);
+
+        public async Task<DataResponseModel<GetUserClaimsModel>> GetClaimsAsync(Guid userId)
+            => await _httpClientService.GetAsync<DataResponseModel<GetUserClaimsModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetClaims/{userId}");
+
     }
 }
