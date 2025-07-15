@@ -9,7 +9,7 @@
     <div class="col-xl-3">
         <RadzenButton Icon="add" Click=@(async args => await DialogService.OpenAsync<BlogAddPage>("Yeni Blog",
                       null,
-                      new DialogOptions{Width = "1000px"} )) />
+                      new DialogOptions{Width = "1400px"} )) />
 
         <RadzenButton Icon="refresh" Click=@Refresh />
 
@@ -17,7 +17,7 @@
         {
             <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<BlogUpdatePage>("Blog Düzenle",
                       new Dictionary<string, object> { { "BlogId", SelectedItem.Id } },
-                      new DialogOptions{Width = "1000px"})) />
+                      new DialogOptions{Width = "1400px"})) />
             <RadzenButton Icon="remove" Click=@DeleteAsync />
         }
 

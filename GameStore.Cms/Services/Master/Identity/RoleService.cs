@@ -5,7 +5,7 @@ using RestSharp;
 
 namespace GameStore.Cms.Services.Master.Identity
 {
-    public class RoleService : BaseService
+    public class RoleService : CrudService
     {
         public RoleService() : base("Roles") { }
 

@@ -136,7 +136,7 @@
             return;
         }
 
-        NotificationHub = HubConnectionProvider.GetSingleOrDefaultAsync("/hubs/notifications");
+        NotificationHub = HubConnectionProvider.GetSingleOrDefault("/hubs/notifications");
 
         profileModel = Mapper.Map<UpdateProfileModel>(result.Data);
 

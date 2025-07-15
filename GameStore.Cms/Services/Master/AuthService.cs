@@ -5,7 +5,7 @@ using RestSharp;
 
 namespace GameStore.Cms.Services.Master
 {
-    public class AuthService : BaseService
+    public class AuthService : CrudService
     {
         public AuthService() : base("Auth") { }
 

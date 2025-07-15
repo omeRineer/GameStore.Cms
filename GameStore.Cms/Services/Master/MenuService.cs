@@ -5,7 +5,7 @@ using RestSharp;
 
 namespace GameStore.Cms.Services.Master
 {
-    public class MenuService : BaseService
+    public class MenuService : CrudService
     {
         public MenuService() : base("Menus") { }
 

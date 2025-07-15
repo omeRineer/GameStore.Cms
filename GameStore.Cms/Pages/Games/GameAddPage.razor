@@ -8,73 +8,88 @@
         <EditForm Model="newGame" OnValidSubmit="SaveAsync">
             <DataAnnotationsValidator />
 
-            <div class="row mb-2">
-                <div class="col-md-2">
-                    <RadzenLabel Text="Oyun Adı:" />
-                </div>
-                <div class="col-md-10">
-                    <RadzenTextBox class="w-100" @bind-Value="newGame.Name" />
-                    <ValidationMessage For="() => newGame.Name" />
-                </div>
-            </div>
+            <div class="row">
+                <div class="col-md-8">
 
-            <div class="row mb-2">
-                <div class="col-md-2">
-                    <RadzenLabel Text="Kategori:" />
-                </div>
-                <div class="col-md-10">
-                    <RadzenDropDown Data="categories"
-                                    TValue="Guid"
-                                    @bind-Value="newGame.CategoryId"
-                                    TextProperty="Value"
-                                    ValueProperty="Key"
-                                    class="w-100" />
-                    <ValidationMessage For="() => newGame.CategoryId" />
-                </div>
-            </div>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <RadzenLabel Text="Oyun Adı:" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenTextBox class="w-100" @bind-Value="newGame.Name" />
+                            <ValidationMessage For="() => newGame.Name" />
+                        </div>
+                    </div>
 
-            <!--<div class="row mb-2">
-                <div class="col-md-2 align-items-center d-flex">
-                    <RadzenLabel Text="Kapak Resmi:" />
-                </div>
-                <div class="col-md-10">
-                    <RadzenButton Text="Resim Seç" Click=@OpenFileDialogAsync />
-                    @if (newGame.CoverImage != null)
-                    {-->
-                        @*<RadzenLink Icon="preview" Target="_blank" Path="@($"{Configuration.CoreConfiguration.StorageAPIPath}{newGame.CoverImage.Path}")" />*@
-                        <!--<RadzenLabel Text="@newGame.CoverImage.Name" />
-                    }
-                    <ValidationMessage For="() => newGame.CoverImage" />
-                </div>
-            </div>-->
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <RadzenLabel Text="Kategori:" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenDropDown Data="categories"
+                                            TValue="Guid"
+                                            @bind-Value="newGame.CategoryId"
+                                            TextProperty="Value"
+                                            ValueProperty="Key"
+                                            class="w-100" />
+                            <ValidationMessage For="() => newGame.CategoryId" />
+                        </div>
+                    </div>
 
-            <div class="row mb-2">
-                <div class="col-md-2">
-                    <RadzenLabel Text="Fiyat:" />
-                </div>
-                <div class="col-md-10">
-                    <RadzenNumeric class="w-100" TValue="decimal" @bind-Value="newGame.Price" />
-                    <ValidationMessage For="() => newGame.Price" />
-                </div>
-            </div>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <RadzenLabel Text="Fiyat:" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenNumeric class="w-100" TValue="decimal" @bind-Value="newGame.Price" />
+                            <ValidationMessage For="() => newGame.Price" />
+                        </div>
+                    </div>
 
-            <div class="row mb-2">
-                <div class="col-md-2">
-                    <RadzenLabel Text="Açıklama:" />
-                </div>
-                <div class="col-md-10">
-                    <RadzenTextArea Rows="5" class="w-100" @bind-Value="newGame.Description" />
-                    <ValidationMessage For="() => newGame.Description" />
-                </div>
-            </div>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <RadzenLabel Text="Açıklama:" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenTextArea Rows="5" class="w-100" @bind-Value="newGame.Description" />
+                            <ValidationMessage For="() => newGame.Description" />
+                        </div>
+                    </div>
 
-            <div class="row mb-2">
-                <div class="col-md-2">
-                    <RadzenLabel Text="Yayın Tarihi:" />
+                    <div class="row mb-2">
+                        <div class="col-md-2 align-items-center d-flex">
+                            <RadzenLabel Text="İçerik:" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenHtmlEditor @bind-Value="newGame.Content" style="height: 300px;" />
+                            <ValidationMessage For="() => newGame.Content" />
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <RadzenLabel Text="Yayın Tarihi:" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenDatePicker class="w-100" TValue="DateTime" @bind-Value="newGame.ReleaseDate" DateFormat="dd.MM.yyyy HH:mm" />
+                            <ValidationMessage For="() => newGame.ReleaseDate" />
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-10">
-                    <RadzenDatePicker class="w-100" TValue="DateTime" @bind-Value="newGame.ReleaseDate" DateFormat="dd.MM.yyyy HH:mm" />
-                    <ValidationMessage For="() => newGame.ReleaseDate" />
+                <div class="col-md-4">
+                    <RadzenCard Variant="@Variant.Filled" Style="overflow: hidden; position: relative; height: 22rem;">
+                        <RadzenButton Text="Resim Seç" Click="@OpenFileDialogAsync" Style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);" />
+
+                        @if (newGame.CoverImage != null)
+                        {
+                            <div class="rz-mx-auto mb-2" style="height: 17rem; display: flex; align-items: center; justify-content: center;">
+                                <img src="@newGame.CoverImage.Url"
+                                     alt="community"
+                                     style="max-height: 100%; max-width: 100%; object-fit: contain;" />
+                            </div>
+                        }
+                    </RadzenCard>
                 </div>
             </div>
 
@@ -119,5 +134,15 @@
         }
 
         IsLoading = false;
+    }
+
+    private async Task OpenFileDialogAsync()
+    {
+        var result = await DialogService.OpenAsync<FileDialog>("Resim Seç",
+            new Dictionary<string, object> { { "Tags", "game-cover-image" } },
+            new DialogOptions { Width = "1000px" });
+
+        if (result != null)
+            newGame.CoverImage = Mapper.Map<PostMediaModel>(result);
     }
 }

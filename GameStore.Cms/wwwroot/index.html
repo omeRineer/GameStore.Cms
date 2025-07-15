@@ -10,23 +10,17 @@
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/standard-base.css">
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
-    <link href="css/spinnerModal.css" rel="stylesheet" />
+    <link href="css/loadingSpinner.css" rel="stylesheet" />
     <link href="CMS.styles.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div id="app">Loading...</div>
-
-    <!--<div class="modal" id="loading" data-backdrop="static">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <div class="loading-spinner mb-2"></div>
-                    <div>Loading...</div>
-                </div>
-            </div>
+    <div id="app">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p class="spinner-message">Yükleniyor</p>
         </div>
-    </div>-->
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.

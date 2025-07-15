@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Cms.Models.Common
+namespace GameStore.Cms.Models.Domain.Core
 {
-    public class File
+    public class PostMediaModel
     {
-        public string Path => $"/{Node}/{Name}";
+        public string Url { get; set; }
         public string Name { get; set; }
-        public string? Node { get; set; }
     }
 }

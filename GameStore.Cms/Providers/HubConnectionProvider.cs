@@ -16,6 +16,7 @@ namespace GameStore.Cms.Providers
             .WithUrl(uri)
             .WithAutomaticReconnect()
             .Build();
+
             #region Events
             foreach (var method in events)
                 hubConnection.On<TMessage>(method.Key, method.Value);
@@ -41,10 +42,10 @@ namespace GameStore.Cms.Providers
             return urlBuilder.Uri;
         }
 
-        public HubConnection? GetSingleOrDefaultAsync(string path)
+        public HubConnection? GetSingleOrDefault(string path)
             => Connections.SingleOrDefault(f => f.Key == path).Value;
 
-        public HubConnection GetSingleAsync(string path)
+        public HubConnection GetSingle(string path)
             => Connections[path];
     }
 }

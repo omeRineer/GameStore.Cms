@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using GameStore.Cms.Models.Domain.Core;
 using GameStore.Cms.Models.Enums;
+using GameStore.Cms.Models.Inputs;
 using GameStore.Cms.Models.Rest.Blog;
 using GameStore.Cms.Models.Rest.Category;
 using GameStore.Cms.Models.Rest.Game;
@@ -31,6 +32,7 @@ namespace GameStore.Cms.Extensions
         {
 
             services.AddScoped<NotificationService>();
+            services.AddScoped<Event>();
 
             services.AddScoped<CategoryService>();
             services.AddScoped<GameService>();
@@ -40,6 +42,8 @@ namespace GameStore.Cms.Extensions
             services.AddScoped<BlogService>();
             services.AddScoped<AuthService>();
             services.AddScoped<ProfileService>();
+            services.AddScoped<StorageService>();
+            services.AddScoped<LookupService>();
 
             services.AddScoped<UserService>();
             services.AddScoped<RoleService>();
@@ -54,7 +58,7 @@ namespace GameStore.Cms.Extensions
         {
             services.AddAuthorizationCore(opt =>
             {
-                opt.AddPolicy(Policies.Blog, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("Blogger,CMS.Components.Blog")));
+                opt.AddPolicy(Policies.Blog, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Blog")));
                 opt.AddPolicy(Policies.Game, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Game")));
                 opt.AddPolicy(Policies.Category, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Category")));
                 opt.AddPolicy(Policies.Identity, policy => policy.Requirements.Add(new CustomAuthorizationRequirement("CMS.Components.Identity")));
@@ -96,6 +100,9 @@ namespace GameStore.Cms.Extensions
                 opt.CreateMap<PermissionModel, UpdatePermissionModel>();
                 opt.CreateMap<MenuModel, UpdateMenuModel>();
                 opt.CreateMap<ProfileModel, UpdateProfileModel>();
+
+                opt.CreateMap<GetMediaModel, PostMediaModel>();
+                opt.CreateMap<FileRoot, PostMediaModel>();
 
                 opt.AddGlobalIgnore("CreateDate");
                 opt.AddGlobalIgnore("EditDate");

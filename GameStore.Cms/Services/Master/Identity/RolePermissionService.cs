@@ -2,7 +2,7 @@
 
 namespace GameStore.Cms.Services.Master.Identity
 {
-    public class RolePermissionService : BaseService
+    public class RolePermissionService : CrudService
     {
         public RolePermissionService() : base("RolePermissions") { }
     }

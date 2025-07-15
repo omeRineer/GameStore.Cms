@@ -28,13 +28,13 @@
 
 @code
 {
-    CurrentUser User;
+    CurrentUser? User;
 
     protected override async Task OnInitializedAsync()
     {
         User = await CurrentUserService.GetCurrentUserAsync();
 
-        var notificationApiKey = "Notification-Api-Key";
+        var notificationApiKey = ClaimTypes.NotificationApiKey;
         if (User.IsAuthenticated && (User.Claims != null && User.Claims.ContainsKey(notificationApiKey)))
         {
             NotificationStorage.OnChanged += OnNotificationChanged;
@@ -43,29 +43,29 @@
             var notificationHub = HubConnectionProvider.CreateConnection<ReceiveNotificationModel>("/hubs/notifications",
                                                                                  new Dictionary<string, Action<ReceiveNotificationModel>>
                                                                                  {
-                                                                                     {
-                                                                                         "ReceiveNotification",
-                                                                                         (message)=>
-                                                                                         {
-                                                                                             NotificationStorage.Add(new NotificationModel
-                                                                                                                 {
-                                                                                                                    Id = message.Id,
-                                                                                                                    Type = message.Type,
-                                                                                                                    Content=message.Content,
-                                                                                                                    ContentType = message.ContentType,
-                                                                                                                    Level = message.Level,
-                                                                                                                    Sender = message.Sender,
-                                                                                                                    Title = message.Title,
-                                                                                                                    IsRead = message.IsRead,
-                                                                                                                    CreateDate = message.CreateDate,
-                                                                                                                    Custom = message.Custom
-                                                                                                                 });
-                                                                                         }
-                                                                                     }
-                                                                                         }, new() { { notificationApiKey, User.Claims[notificationApiKey] } });
-
+                                                                             {
+                                                                                 "ReceiveNotification",
+                                                                                 (message)=>
+                                                                                 {
+                                                                                     NotificationStorage.Add(new NotificationModel
+                                                                                                         {
+                                                                                                            Id = message.Id,
+                                                                                                            Type = message.Type,
+                                                                                                            Content=message.Content,
+                                                                                                            ContentType = message.ContentType,
+                                                                                                            Level = message.Level,
+                                                                                                            Sender = message.Sender,
+                                                                                                            Title = message.Title,
+                                                                                                            IsRead = message.IsRead,
+                                                                                                            CreateDate = message.CreateDate,
+                                                                                                            Custom = message.Custom
+                                                                                                         });
+                                                                                 }
+                                                                             }
+                                                                                     }, new() { { notificationApiKey, User.Claims[notificationApiKey] } });
             await notificationHub.StartAsync();
         }
+
     }
 
     async Task LogoutAsync()

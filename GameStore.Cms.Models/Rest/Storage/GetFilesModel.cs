@@ -1,15 +1,15 @@
 ﻿using GameStore.Cms.Models.Domain.Core;
+using GameStore.Cms.Models.Inputs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Cms.Models.Rest.Menu
+namespace GameStore.Cms.Models.Rest.Storage
 {
-    public class GetMenusModel
+    public class GetFilesModel
     {
-        public List<MenuModel>? Menus { get; set; }
+        public List<FileRoot>? FileList { get; set; }
     }
-
 }

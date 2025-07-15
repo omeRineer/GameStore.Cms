@@ -6,7 +6,7 @@
         public string Header { get; set; }
         public string Content { get; set; }
         public bool Status { get; set; }
-        public Common.File CoverImage { get; set; }
+        public GetMediaModel CoverImage { get; set; }
 
     }
 }

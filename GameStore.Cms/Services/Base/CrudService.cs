@@ -5,11 +5,11 @@ using RestSharp;
 
 namespace GameStore.Cms.Services.Base
 {
-    public class BaseService
+    public class CrudService
     {
         protected readonly HttpClientService _httpClientService;
         protected readonly string Controller;
-        public BaseService(string controller)
+        public CrudService(string controller)
         {
             Controller = controller;
             _httpClientService = StaticServiceProvider.GetService<HttpClientService>();

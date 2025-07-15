@@ -9,7 +9,7 @@
     <div class="col-xl-3">
         <RadzenButton Icon="add" Click=@(args => DialogService.Open<SliderContentAddPage>("Yeni Slider",
                       null,
-                      new DialogOptions{Width = "600px"} )) />
+                      new DialogOptions{Width = "900px"} )) />
 
         <RadzenButton Icon="refresh" Click=@Refresh />
 
@@ -17,7 +17,7 @@
         {
             <RadzenButton Icon="preview" Click=@(async args => await DialogService.OpenAsync<SliderContentUpdatePage>("Slider Düzenle",
                       new Dictionary<string, object> { { "SliderContentId", SelectedItem.Id } },
-                      new DialogOptions{Width = "600px"} )) />
+                      new DialogOptions{Width = "900px"} )) />
             <RadzenButton Icon="remove" Click=@Delete />
         }
     </div>
@@ -33,7 +33,7 @@
               Count="Count"
               Columns=@(new Dictionary<string, string>
               {
-              { "SliderType.Description", "Slider Tipi" },
+              { "SliderTypeId", "Slider Tipi" },
               { "Header", "Başlık" },
               { "IsActive", "Akitiflik" },
               { "Priority", "Öncelik Sırası" },

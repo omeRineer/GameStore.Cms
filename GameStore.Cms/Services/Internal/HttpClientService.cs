@@ -9,12 +9,13 @@ namespace GameStore.Cms.Services.Internal
 {
     public class HttpClientService
     {
+        readonly Event @event;
         readonly CurrentUserService CurrentUserService;
         readonly ISyncLocalStorageService LocalStorageService;
         readonly HttpClient _httpClient;
         readonly NotificationService NotificationService;
 
-        public HttpClientService(HttpClient httpClient, ISyncLocalStorageService localStorageService, CurrentUserService currentUserService, NotificationService notificationService)
+        public HttpClientService(HttpClient httpClient, ISyncLocalStorageService localStorageService, CurrentUserService currentUserService, NotificationService notificationService, Event @event)
         {
             _httpClient = httpClient;
             LocalStorageService = localStorageService;
@@ -23,6 +24,7 @@ namespace GameStore.Cms.Services.Internal
 
 
             SetHttpClientDefaultParameters("Bearer");
+            this.@event = @event;
         }
 
         public async Task<TModel> GetAsync<TModel>(string url)

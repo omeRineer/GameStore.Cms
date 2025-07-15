@@ -1,0 +1,89 @@
+﻿@inherits BaseDialog
+
+@inject GameService GameService
+
+<AuthorizeArea Policy="@Policies.Game">
+    <Loading IsLoading="IsLoading">
+        <RadzenCard>
+            <div class="row">
+                <div class="col-auto">
+                    <RadzenButton Click="@(async (args) => await SaveAsync())"
+                                  Style="margin-bottom: 10px;"
+                                  Visible="@(IsLoading == false)"
+                                  Icon="save" />
+
+                    <RadzenButton Click="@(async (args) => await OpenFileDialogAsync())"
+                                  Style="margin-bottom: 10px;"
+                                  Visible="@(IsLoading == false)"
+                                  Icon="add" />
+                </div>
+
+                <div class="row">
+                    <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                   FilterOperator="StringFilterOperator.Contains"
+                                   AllowFiltering="true"
+                                   @bind-Value=@uploadGameImagesModel.Images
+                                   TextProperty="Name"
+                                   Data="uploadGameImagesModel.Images"
+                                   AllowClear=true
+                                   Placeholder="Arama"
+                                   Style="width: 100%; height:400px" />
+                </div>
+            </div>
+        </RadzenCard>
+    </Loading>
+</AuthorizeArea>
+
+@code {
+    [Parameter] public Guid GameId { get; set; }
+    UploadGameImagesModel uploadGameImagesModel = new UploadGameImagesModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        var result = await GameService.GetImagesAsync(GameId);
+
+        if (!result.Success)
+        {
+            NotificationService.Error(result.Message);
+            return;
+        }
+
+        uploadGameImagesModel.EntityId = GameId;
+        uploadGameImagesModel.Images = result.Data?.Images?.Select(s=> new PostMediaModel { Url = s.Url, Name = s.Name}).ToList() ?? new List<PostMediaModel>();
+
+        IsLoading = false;
+    }
+
+    async Task SaveAsync()
+    {
+        IsLoading = true;
+
+        var result = await GameService.UploadImagesAsync(uploadGameImagesModel);
+
+        if (!result.Success)
+            NotificationService.Error(result.Message);
+        else
+        {
+            NotificationService.Success(result.Message);
+            DialogService.Close(DialogResult.Refresh);
+        }
+
+        IsLoading = false;
+    }
+
+    private async Task OpenFileDialogAsync()
+    {
+        var result = await DialogService.OpenAsync<FileDialog>("Resim Seç",
+            new Dictionary<string, object> { { "IsMultiple", true }, { "Tags", "game-image" } },
+            new DialogOptions { Width = "1000px" });
+
+        if (result != null)
+        {
+            var selectedImages = Mapper.Map<List<PostMediaModel>>(result);
+            uploadGameImagesModel.Images?.AddRange(selectedImages);
+
+        }
+    }
+}

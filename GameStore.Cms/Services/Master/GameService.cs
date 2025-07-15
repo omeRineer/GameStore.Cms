@@ -1,15 +1,18 @@
-﻿using GameStore.Cms.Services.Base;
+﻿using GameStore.Cms.Models.Rest;
+using GameStore.Cms.Models.Rest.Game;
+using GameStore.Cms.Services.Base;
 
 namespace GameStore.Cms.Services.Master
 {
-    public class GameService : BaseService
+    public class GameService : CrudService
     {
         public GameService() : base("Games") { }
 
-        //public async Task<RestResponse> UploadGameImagesAsync(UploadGameImagesModel uploadGameImagesModel)
-        //    => await RestHelper.PostAsync<UploadGameImagesModel, object>(new RestRequestParameter
-        //    {
-        //        BaseUrl = $"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/UploadImages"
-        //    }, uploadGameImagesModel);
+        public async Task<ResponseModel> UploadImagesAsync(UploadGameImagesModel uploadGameImagesModel)
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/UploadImages", uploadGameImagesModel);
+
+        public async Task<DataResponseModel<GetGameImagesModel>> GetImagesAsync(Guid id)
+            => await _httpClientService.GetAsync<DataResponseModel<GetGameImagesModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetImages/{id}");
+
     }
 }

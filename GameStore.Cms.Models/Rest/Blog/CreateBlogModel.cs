@@ -1,4 +1,5 @@
-﻿using GameStore.Cms.Models.Inputs;
+﻿using GameStore.Cms.Models.Domain.Core;
+using GameStore.Cms.Models.Inputs;
 using System.ComponentModel.DataAnnotations;
 
 namespace GameStore.Cms.Models.Rest.Blog
@@ -16,7 +17,6 @@ namespace GameStore.Cms.Models.Rest.Blog
 
         public bool Status { get; set; }
 
-        [Required]
-        public Common.File CoverImage { get; set; }
+        public PostMediaModel CoverImage { get; set; }
     }
 }

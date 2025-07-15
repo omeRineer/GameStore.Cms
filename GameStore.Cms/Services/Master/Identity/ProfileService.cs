@@ -5,7 +5,7 @@ using GameStore.Cms.Models.Rest.Identity.Profile;
 
 namespace GameStore.Cms.Services.Master.Identity
 {
-    public class ProfileService : BaseService
+    public class ProfileService : CrudService
     {
         public ProfileService() : base("Profile")
         {

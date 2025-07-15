@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Cms.Models.Rest.Menu
+namespace GameStore.Cms.Models.Rest.Category
 {
-    public class GetMenusModel
+    public class GetCategoriesModel
     {
-        public List<MenuModel>? Menus { get; set; }
+        public List<CategoryModel>? Categories { get; set; }
     }
-
 }

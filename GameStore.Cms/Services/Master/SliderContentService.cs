@@ -2,7 +2,7 @@
 
 namespace GameStore.Cms.Services.Master
 {
-    public class SliderContentService : BaseService
+    public class SliderContentService : CrudService
     {
         public SliderContentService() : base("SliderContents") { }
     }

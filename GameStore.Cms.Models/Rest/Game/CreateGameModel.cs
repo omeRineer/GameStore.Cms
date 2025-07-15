@@ -1,4 +1,5 @@
-﻿using GameStore.Cms.Models.Inputs;
+﻿using GameStore.Cms.Models.Domain.Core;
+using GameStore.Cms.Models.Inputs;
 using System.ComponentModel.DataAnnotations;
 
 namespace GameStore.Cms.Models.Rest.Game
@@ -15,6 +16,8 @@ namespace GameStore.Cms.Models.Rest.Game
 
         [MaxLength(500)]
         public string? Description { get; set; }
+        
+        public string? Content { get; set; }
 
         [Required]
         public decimal Price { get; set; }
@@ -22,6 +25,6 @@ namespace GameStore.Cms.Models.Rest.Game
         public DateTime ReleaseDate { get; set; }
 
         [Required]
-        public Common.File CoverImage { get; set; }
+        public PostMediaModel CoverImage { get; set; }
     }
 }

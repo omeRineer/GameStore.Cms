@@ -2,7 +2,7 @@
 
 namespace GameStore.Cms.Services.Master
 {
-    public class BlogService : BaseService
+    public class BlogService : CrudService
     {
         public BlogService() : base("Blogs") { }
     }

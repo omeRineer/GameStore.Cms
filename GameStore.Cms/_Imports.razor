@@ -2,6 +2,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NotificationService NotificationService
 @inject DialogService DialogService
+@inject LookupService LookupService
 @inject AutoMapper.IMapper Mapper
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
@@ -9,6 +10,7 @@
 @inject CurrentUserService CurrentUserService
 @inject NotificationStorage NotificationStorage
 @inject HubConnectionProvider HubConnectionProvider
+@inject Event Event
 
 @using Microsoft.AspNetCore.SignalR.Client
 @using Extensions
@@ -25,8 +27,8 @@
 @using Microsoft.AspNetCore.Authorization
 @using Radzen
 @using Radzen.Blazor
-@using Shared.Components
 @using GameStore.Cms.Shared.Components
+@using GameStore.Cms.Shared.Components.File
 @using Blazored.LocalStorage;
 
 @using GameStore.Cms.Providers
@@ -58,11 +60,12 @@
 @using GameStore.Cms.Models.Rest.Identity.Profile
 @using GameStore.Cms.Models.Rest.Identity.Role
 @using GameStore.Cms.Models.Rest.Identity.Permission
-@using GameStore.Cms.Models.Common
 @using GameStore.Cms.Models.Rest.Game
 @using GameStore.Cms.Models.Meta.Notification
 @using GameStore.Cms.Models.SignalR
 @using GameStore.Cms.Models.Enums
+@using GameStore.Cms.Models.Inputs
+@using GameStore.Cms.Models.Rest.Storage
 @using GameStore.Cms.Models.OData
 @using GameStore.Cms.Models.OData.Identity
 @using BaseModel = GameStore.Cms.Models.Inputs

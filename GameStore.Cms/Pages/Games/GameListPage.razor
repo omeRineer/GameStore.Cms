@@ -10,17 +10,18 @@
     <div class="col-xl-3">
         <RadzenButton Icon="add" Click=@(async args => await DialogService.OpenAsync<GameAddPage>("Yeni Oyun",
                                            null,
-                                           new DialogOptions{Width = "800px"} )) />
+                                           new DialogOptions{Width = "1400px"} )) />
         <RadzenButton Icon="refresh" Click=@Refresh />
 
         @if (SelectedItem != null)
         {
-            @*<RadzenButton Icon="collections" Click=@(async args => await DialogService.OpenAsync<GameGalleryPage>("Galeri",
-                      new Dictionary<string, object> { { "GameId", SelectedItem.Id } },
-                      new DialogOptions{Width = "800px"} )) />*@
+            <RadzenButton Icon="collections" Click=@(async args => await DialogService.OpenAsync<GameImagesPage>("Galeri",
+                new Dictionary<string, object> { { "GameId", SelectedItem.Id } },
+                new DialogOptions{Width = "800px"} )) />
+
             <RadzenButton Icon="edit" Click=@(async args => await DialogService.OpenAsync<GameUpdatePage>("Oyun Düzenle",
                                               new Dictionary<string, object> { { "GameId", SelectedItem.Id } },
-                                              new DialogOptions{Width = "800px"})) />
+                                              new DialogOptions{Width = "1400px"})) />
 
             <RadzenButton Icon="remove" Click=@DeleteAsync />
         }

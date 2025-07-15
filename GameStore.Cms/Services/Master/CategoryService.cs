@@ -2,7 +2,7 @@
 
 namespace GameStore.Cms.Services.Master
 {
-    public class CategoryService : BaseService
+    public class CategoryService : CrudService
     {
         public CategoryService() : base("Categories") { }
     }

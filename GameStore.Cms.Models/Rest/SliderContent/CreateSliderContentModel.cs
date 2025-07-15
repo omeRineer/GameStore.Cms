@@ -1,4 +1,5 @@
-﻿using GameStore.Cms.Models.Inputs;
+﻿using GameStore.Cms.Models.Domain.Core;
+using GameStore.Cms.Models.Inputs;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,6 +24,6 @@ namespace GameStore.Cms.Models.Rest.SliderContent
         public int Priority { get; set; }
 
         [Required]
-        public Common.File Image { get; set; }
+        public PostMediaModel CoverImage { get; set; }
     }
 }

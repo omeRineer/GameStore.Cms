@@ -4,7 +4,7 @@ using GameStore.Cms.Services.Base;
 
 namespace GameStore.Cms.Services.Master.Identity
 {
-    public class UserService : BaseService
+    public class UserService : CrudService
     {
         public UserService() : base("Users") { }
 

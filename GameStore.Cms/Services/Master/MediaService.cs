@@ -3,7 +3,7 @@ using RestSharp;
 
 namespace GameStore.Cms.Services.Master
 {
-    public class MediaService : BaseService
+    public class MediaService : CrudService
     {
         public MediaService() : base("Medias") { }
 
