@@ -13,6 +13,6 @@ namespace GameStore.Cms.Models.Domain.Core
         public string? To { get; set; }
         public int Priority { get; set; }
         public bool IsActive { get; set; }
-        public GetMediaModel CoverImage { get; set; }
+        public string CoverImage { get; set; }
     }
 }

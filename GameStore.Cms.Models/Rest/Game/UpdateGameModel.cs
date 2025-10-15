@@ -31,6 +31,6 @@ namespace GameStore.Cms.Models.Rest.Game
 
         public DateTime ReleaseDate { get; set; }
 
-        public PostMediaModel? CoverImage { get; set; }
+        public string? CoverImage { get; set; }
     }
 }

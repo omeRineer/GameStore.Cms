@@ -101,8 +101,6 @@ namespace GameStore.Cms.Extensions
                 opt.CreateMap<MenuModel, UpdateMenuModel>();
                 opt.CreateMap<ProfileModel, UpdateProfileModel>();
 
-                opt.CreateMap<GetMediaModel, PostMediaModel>();
-                opt.CreateMap<FileRoot, PostMediaModel>();
 
                 opt.AddGlobalIgnore("CreateDate");
                 opt.AddGlobalIgnore("EditDate");

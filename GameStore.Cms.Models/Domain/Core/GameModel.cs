@@ -14,14 +14,8 @@ namespace GameStore.Cms.Models.Domain.Core
         public string? Content { get; set; }
         public decimal Price { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public GetMediaModel CoverImage { get; set; }
+        public string? CoverImage { get; set; }
 
-        public GameModel_Category Category { get; set; }
-    }
-
-    public class GameModel_Category
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        public CategoryModel Category { get; set; }
     }
 }

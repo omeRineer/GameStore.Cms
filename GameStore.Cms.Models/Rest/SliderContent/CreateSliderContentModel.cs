@@ -24,6 +24,6 @@ namespace GameStore.Cms.Models.Rest.SliderContent
         public int Priority { get; set; }
 
         [Required]
-        public PostMediaModel CoverImage { get; set; }
+        public string CoverImage { get; set; }
     }
 }

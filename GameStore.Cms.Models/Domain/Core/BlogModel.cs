@@ -6,7 +6,7 @@
         public string Header { get; set; }
         public string Content { get; set; }
         public bool Status { get; set; }
-        public GetMediaModel CoverImage { get; set; }
+        public string? CoverImage { get; set; }
 
     }
 }

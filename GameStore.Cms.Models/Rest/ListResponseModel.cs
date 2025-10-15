@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace GameStore.Cms.Models.Rest
 {
-    public class DataResponseModel<TData> : ResponseModel
+    public class ListResponseModel<TData>
     {
-        public TData? Data { get; set; }
+        public int Count { get; init; }
+        public List<TData> Data { get; set; }
     }
 }

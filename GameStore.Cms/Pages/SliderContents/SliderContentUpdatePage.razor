@@ -73,7 +73,7 @@
                         @if (UpdateSliderContent.CoverImage != null)
                         {
                             <div class="rz-mx-auto mb-2" style="height: 17rem; display: flex; align-items: center; justify-content: center;">
-                                <img src="@UpdateSliderContent.CoverImage.Url"
+                                <img src="@UpdateSliderContent.CoverImage"
                                      alt="community"
                                      style="max-height: 100%; max-width: 100%; object-fit: contain;" />
                             </div>
@@ -132,7 +132,10 @@
                 new DialogOptions { Width = "1000px" });
 
         if (result != null)
-            UpdateSliderContent.CoverImage = Mapper.Map<PostMediaModel>(result);
+        {
+            var selectedMedia = (FileRoot)result;
+            UpdateSliderContent.CoverImage = selectedMedia.Url;
+        }
     }
 
     async Task SaveAsync()

@@ -23,8 +23,6 @@ namespace GameStore.Cms.Models.Rest.Game
         public decimal Price { get; set; }
 
         public DateTime ReleaseDate { get; set; }
-
-        [Required]
-        public PostMediaModel CoverImage { get; set; }
+        public string? CoverImage { get; set; }
     }
 }

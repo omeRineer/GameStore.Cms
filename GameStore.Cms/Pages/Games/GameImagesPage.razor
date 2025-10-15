@@ -51,7 +51,7 @@
         }
 
         uploadGameImagesModel.EntityId = GameId;
-        uploadGameImagesModel.Images = result.Data?.Images?.Select(s=> new PostMediaModel { Url = s.Url, Name = s.Name}).ToList() ?? new List<PostMediaModel>();
+        uploadGameImagesModel.Images = result.Data?.Data?.Select(s=> new UploadGameImagesModel.UploadGameImages_Item { Url = s.Url, Name = s.Name}).ToList() ?? new();
 
         IsLoading = false;
     }
@@ -81,8 +81,13 @@
 
         if (result != null)
         {
-            var selectedImages = Mapper.Map<List<PostMediaModel>>(result);
-            uploadGameImagesModel.Images?.AddRange(selectedImages);
+            var selectedImages = (List<FileRoot>)result;
+            uploadGameImagesModel.Images?.AddRange(selectedImages.Select(s=> new UploadGameImagesModel.UploadGameImages_Item
+            {
+                Url = s.Url,
+                Name = s.Name,
+                Priority = 1
+            }));
 
         }
     }

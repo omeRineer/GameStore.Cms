@@ -17,6 +17,6 @@ namespace GameStore.Cms.Models.Rest.Blog
 
         public bool Status { get; set; }
 
-        public PostMediaModel CoverImage { get; set; }
+        public string? CoverImage { get; set; }
     }
 }
