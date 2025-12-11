@@ -9,24 +9,24 @@ namespace GameStore.Cms.Services.Master.Identity
         public UserService() : base("Users") { }
 
         public async Task<ResponseModel> SetPermissionsAsync(SetUserPermissionsModel model)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/SetPermissions", model);
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/SetPermissions", model);
 
         public async Task<DataResponseModel<GetUserPermissionsModel>> GetPermissionsAsync(Guid userId)
-            => await _httpClientService.GetAsync<DataResponseModel<GetUserPermissionsModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetPermissions/{userId}");
+            => await _httpClientService.GetAsync<DataResponseModel<GetUserPermissionsModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/GetPermissions/{userId}");
 
 
         public async Task<ResponseModel> SetRolesAsync(SetUserRolesModel model)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/SetRoles", model);
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/SetRoles", model);
 
         public async Task<DataResponseModel<GetUserRolesModel>> GetRolesAsync(Guid userId)
-            => await _httpClientService.GetAsync<DataResponseModel<GetUserRolesModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetRoles/{userId}");
+            => await _httpClientService.GetAsync<DataResponseModel<GetUserRolesModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/GetRoles/{userId}");
 
 
         public async Task<ResponseModel> SetClaimsAsync(SetUserClaimsModel model)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/SetClaims", model);
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/SetClaims", model);
 
         public async Task<DataResponseModel<GetUserClaimsModel>> GetClaimsAsync(Guid userId)
-            => await _httpClientService.GetAsync<DataResponseModel<GetUserClaimsModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetClaims/{userId}");
+            => await _httpClientService.GetAsync<DataResponseModel<GetUserClaimsModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/GetClaims/{userId}");
 
     }
 }

@@ -14,6 +14,6 @@ namespace GameStore.Cms.Services.Master
         }
 
         public async Task<DataResponseModel<GetLookupsModel>> GetSliderTypesAsync()
-            => await _httpClientService.GetAsync<DataResponseModel<GetLookupsModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/Lookups/SliderTypes");
+            => await _httpClientService.GetAsync<DataResponseModel<GetLookupsModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/Lookups/SliderTypes");
     }
 }

@@ -19,10 +19,6 @@
                                   new Dictionary<string, object> { { "MenuId", ((ODataMenu)SelectedItem).Id } },
                                   new DialogOptions{Width = "600px"})) />
             <RadzenButton Icon="remove" Click=@Delete />
-
-            <RadzenButton Icon="key" Click=@(async args => await DialogService.OpenAsync<MenuPermissionsPage>(SelectedItem.Title,
-                new Dictionary<string, object> { { "Menu", SelectedItem } },
-                new DialogOptions{Width = "700px"})) />
         }
 
     </div>

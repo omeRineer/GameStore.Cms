@@ -10,6 +10,6 @@ namespace GameStore.Cms.Services.Master
         public AuthService() : base("Auth") { }
 
         public async Task<DataResponseModel<AccessTokenModel>> LoginAsync(UserLoginModel model)
-            => await _httpClientService.PostAsync<DataResponseModel<AccessTokenModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/Login", model);
+            => await _httpClientService.PostAsync<DataResponseModel<AccessTokenModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/Login", model);
     }
 }

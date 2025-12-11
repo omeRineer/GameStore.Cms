@@ -11,7 +11,7 @@ namespace GameStore.Cms.Services.Master
         }
 
         public async Task<DataResponseModel<GetFilesModel>> GetFilesAsync(string? tags = null)
-            => await _httpClientService.GetAsync<DataResponseModel<GetFilesModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetFiles/{tags}");
+            => await _httpClientService.GetAsync<DataResponseModel<GetFilesModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}/GetFiles/{tags}");
 
     }
 }

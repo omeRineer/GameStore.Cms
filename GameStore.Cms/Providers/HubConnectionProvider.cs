@@ -30,7 +30,7 @@ namespace GameStore.Cms.Providers
 
         Uri GetUrl(string path, Dictionary<string, string>? queryParameters = null)
         {
-            var urlBuilder = new UriBuilder($"{CmsConfiguration.APIOptions.Meta.BaseUrl}{path}");
+            var urlBuilder = new UriBuilder($"{CmsConfiguration.APIOptions.BaseUrl}/metaapi/{path}");
             var query = HttpUtility.ParseQueryString(urlBuilder.Query);
 
             if (queryParameters != null)

@@ -14,10 +14,10 @@ namespace GameStore.Cms.Services.Meta
         }
 
         public async Task<DataResponseModel<TModel>> GetListAsync<TModel>()
-            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Meta.ApiUrl}/Notifications?Notification-Api-Key=z4s6pKl3ztfDcBlg1du5rRZmdylG7q5oAjtcUhpSd6K2GpZQfD4awicKbm2RNCDe");
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/metaapi/Notifications?Notification-Api-Key=z4s6pKl3ztfDcBlg1du5rRZmdylG7q5oAjtcUhpSd6K2GpZQfD4awicKbm2RNCDe");
 
         public async Task<DataResponseModel<TModel>> ReadAsync<TModel>(Guid id)
-            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Meta.ApiUrl}/Notifications/{id}?Notification-Api-Key=z4s6pKl3ztfDcBlg1du5rRZmdylG7q5oAjtcUhpSd6K2GpZQfD4awicKbm2RNCDe");
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/metaapi/Notifications/{id}?Notification-Api-Key=z4s6pKl3ztfDcBlg1du5rRZmdylG7q5oAjtcUhpSd6K2GpZQfD4awicKbm2RNCDe");
 
     }
 }

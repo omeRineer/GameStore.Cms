@@ -29,7 +29,7 @@ namespace GameStore.Cms.Services.Base
 
         public async Task<ODataServiceResult<TModel>> GetListAsync(ODataRequestParams requestParams)
         {
-            var uri = new Uri($"{CmsConfiguration.APIOptions.OData.ApiUrl}/{Controller}");
+            var uri = new Uri($"{CmsConfiguration.APIOptions.BaseUrl}/odataapi/{Controller}");
             var oDataUri = uri.GetODataUri(requestParams.Filter,
                                     requestParams.Top,
                                     requestParams.Skip,

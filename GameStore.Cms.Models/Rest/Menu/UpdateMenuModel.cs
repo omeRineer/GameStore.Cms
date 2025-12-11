@@ -19,5 +19,8 @@ namespace GameStore.Cms.Models.Rest.Menu
 
         [MaxLength(30)]
         public string? Icon { get; set; }
+
+        [MaxLength(100)]
+        public string? Permission { get; set; }
     }
 }

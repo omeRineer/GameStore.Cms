@@ -16,19 +16,19 @@ namespace GameStore.Cms.Services.Base
         }
 
         public async Task<DataResponseModel<TModel>> GetListAsync<TModel>()
-            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}");
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}");
 
         public async Task<DataResponseModel<TModel>> GetAsync<TModel>(object id)
-            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/{id}");
+            => await _httpClientService.GetAsync<DataResponseModel<TModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}/{id}");
 
         public async Task<ResponseModel> CreateAsync(object entity)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/Create", entity);
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}/Create", entity);
 
         public async Task<ResponseModel> DeleteAsync(object id)
-            => await _httpClientService.DeleteAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/Delete/{id}");
+            => await _httpClientService.DeleteAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}/Delete/{id}");
 
         public async Task<ResponseModel> UpdateAsync(object entity)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/Update", entity);
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}/Update", entity);
 
 
     }

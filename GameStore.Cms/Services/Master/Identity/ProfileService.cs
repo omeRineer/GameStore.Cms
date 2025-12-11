@@ -12,10 +12,10 @@ namespace GameStore.Cms.Services.Master.Identity
         }
 
         public async Task<ResponseModel> UpdateAsync(UpdateProfileModel model)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}", model);
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}", model);
 
         public async Task<DataResponseModel<ProfileModel>> GetAsync()
-            => await _httpClientService.GetAsync<DataResponseModel<ProfileModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}");
+            => await _httpClientService.GetAsync<DataResponseModel<ProfileModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/internalapi/{Controller}");
 
     }
 }

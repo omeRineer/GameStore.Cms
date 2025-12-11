@@ -10,10 +10,10 @@ namespace GameStore.Cms.Services.Master.Identity
         public RoleService() : base("Roles") { }
 
         public async Task<ResponseModel> SetPermissionsAsync(SetRolePermissionsModel model)
-            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/SetPermissions", model);
+            => await _httpClientService.PostAsync<ResponseModel>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/SetPermissions", model);
 
         public async Task<DataResponseModel<GetRolePermissionsModel>> GetPermissionsAsync(Guid id)
-            => await _httpClientService.GetAsync<DataResponseModel<GetRolePermissionsModel>>($"{CmsConfiguration.APIOptions.Web.ApiUrl}/{Controller}/GetPermissions/{id}");
+            => await _httpClientService.GetAsync<DataResponseModel<GetRolePermissionsModel>>($"{CmsConfiguration.APIOptions.BaseUrl}/identityapi/{Controller}/GetPermissions/{id}");
 
     }
 }

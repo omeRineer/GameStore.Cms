@@ -48,9 +48,6 @@ namespace GameStore.Cms.Extensions
             services.AddScoped<UserService>();
             services.AddScoped<RoleService>();
             services.AddScoped<PermissionService>();
-            services.AddScoped<UserRoleService>();
-            services.AddScoped<UserPermisionService>();
-            services.AddScoped<RolePermissionService>();
 
         }
 
