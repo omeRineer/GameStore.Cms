@@ -34,36 +34,10 @@
     {
         User = await CurrentUserService.GetCurrentUserAsync();
 
-        var notificationApiKey = ClaimTypes.NotificationApiKey;
-        if (User.IsAuthenticated && (User.Claims != null && User.Claims.ContainsKey(notificationApiKey)))
+        if (User.IsAuthenticated && (User.Claims != null && User.Claims.ContainsKey(ClaimTypes.FluxifyApiKey)))
         {
-            NotificationStorage.OnChanged += OnNotificationChanged;
-            await NotificationStorage.LoadAsync();
-
-            var notificationHub = HubConnectionProvider.CreateConnection<ReceiveNotificationModel>("/hubs/notifications",
-                                                                                 new Dictionary<string, Action<ReceiveNotificationModel>>
-                                                                                 {
-                                                                             {
-                                                                                 "ReceiveNotification",
-                                                                                 (message)=>
-                                                                                 {
-                                                                                     NotificationStorage.Add(new NotificationModel
-                                                                                                         {
-                                                                                                            Id = message.Id,
-                                                                                                            Type = message.Type,
-                                                                                                            Content=message.Content,
-                                                                                                            ContentType = message.ContentType,
-                                                                                                            Level = message.Level,
-                                                                                                            Sender = message.Sender,
-                                                                                                            Title = message.Title,
-                                                                                                            IsRead = message.IsRead,
-                                                                                                            CreateDate = message.CreateDate,
-                                                                                                            Custom = message.Custom
-                                                                                                         });
-                                                                                 }
-                                                                             }
-                                                                                     }, new() { { notificationApiKey, User.Claims[notificationApiKey] } });
-            await notificationHub.StartAsync();
+            NotificationStorage.OnReceived += OnNotificationReceived;
+            await NotificationStorage.ConnectAsync();
         }
 
     }
@@ -71,11 +45,12 @@
     async Task LogoutAsync()
     {
         await CurrentUserService.LogoutAsync();
+        await NotificationStorage.DisconnectAsync();
 
         NavigationManager.NavigateTo("/login", true);
     }
 
-    private async void OnNotificationChanged()
+    private async void OnNotificationReceived()
     {
         await InvokeAsync(StateHasChanged);
 
@@ -83,6 +58,6 @@
 
     public void Dispose()
     {
-        NotificationStorage.OnChanged -= OnNotificationChanged;
+        NotificationStorage.OnReceived -= OnNotificationReceived;
     }
 }

@@ -1,9 +1,10 @@
 ﻿@layout MainLayout
 @inherits LayoutComponentBase
+@attribute [Authorize(Policies.Notification)]
 @implements IDisposable
 
-@attribute [Authorize(Policies.Notification)]
-<NotConnection Condition="NotificationHub == null || NotificationHub.State == HubConnectionState.Disconnected">
+
+<NotConnection Condition="NotificationStorage.Hub == null || NotificationStorage.Hub.State == HubConnectionState.Disconnected">
     <div class="notification-layout">
         <aside class="notification-menu shadow-sm rounded-3">
             <ul>
@@ -24,9 +25,9 @@
                 <li>
                     <NavLink href="/notifications/system" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
                         <span>⚙️ Sistem Mesajları</span>
-                        @if (NotificationStorage.Notifications.Any(f => f.Type == "system" && !f.IsRead))
+                        @if (NotificationStorage.Notifications.Any(f => f.Topics?.Contains("notification_system") == true && !f.IsRead))
                         {
-                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => c.Type == "system" && !c.IsRead)</span>
+                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => c.Topics?.Contains("notification_system") == true && !c.IsRead)</span>
                         }
 
                     </NavLink>
@@ -113,22 +114,21 @@
 </NotConnection>
 
 @code {
-    HubConnection? NotificationHub;
 
     protected override async Task OnInitializedAsync()
     {
-        NotificationHub = HubConnectionProvider.GetSingleOrDefault("/hubs/notifications");
-        NotificationStorage.OnChanged += OnNotificationChanged;
+        await NotificationStorage.ConnectAsync();
+        NotificationStorage.OnReceived += OnNotificationReceived;
     }
 
-    async void OnNotificationChanged()
+    async void OnNotificationReceived()
     {
         await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        NotificationStorage.OnChanged -= OnNotificationChanged;
+        NotificationStorage.OnReceived -= OnNotificationReceived;
     }
 
 }

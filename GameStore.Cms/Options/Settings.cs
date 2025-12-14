@@ -10,6 +10,7 @@ namespace GameStore.Cms.Options
     public class Settings
     {
         public APIOptions APIOptions { get; set; }
+        public FluxifyOptions FluxifyOptions { get; set; }
         public HostEnvironment HostEnvironment { get; set; }
     }
 }

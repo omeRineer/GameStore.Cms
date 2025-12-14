@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using GS = GameStore.Cms.Models.Enums;
 using GameStore.Cms.Models.Rest.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
@@ -48,9 +49,8 @@ namespace GameStore.Cms.Services.Internal
                 Permissions = claims.Where(f => f.Type == "Permission").Select(s => s.Value).ToArray(),
                 IsAuthenticated = true
             };
-
-            CurrentUser.Claims = claims.Any(x => x.Type == "Special") ? JsonSerializer.Deserialize<Dictionary<string, string>>(claims.FirstOrDefault(f => f.Type == "Special")?.Value)
-                                                                      : new Dictionary<string, string>();
+            // TODO : Düzeltilecek
+            CurrentUser.Claims = claims.Where(f => f.Type == GS.ClaimTypes.FluxifyApiKey).ToDictionary(f => f.Type, f => f.Value);
 
             return CurrentUser;
         }

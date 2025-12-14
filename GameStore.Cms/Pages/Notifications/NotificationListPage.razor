@@ -1,6 +1,5 @@
 ﻿@page "/notifications/{*Tab}"
 @implements IDisposable
-
 @layout NotificationLayout
 
 @inject Meta.NotificationService MetaNotificationService
@@ -160,7 +159,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        NotificationStorage.OnChanged += OnNotificationChanged;
+        NotificationStorage.OnReceived += OnNotificationReceived;
     }
 
     private async Task UpdateNotificationsAsync()
@@ -174,7 +173,7 @@
                 break;
 
             case "system":
-                Notifications = NotificationStorage.Notifications.Where(f => f.Type == "system").ToList();
+                Notifications = NotificationStorage.Notifications.Where(f => f.Topics?.Contains("notification_system") == true).ToList();
                 break;
 
             case "sent":
@@ -191,7 +190,7 @@
         }
     }
 
-    private async void OnNotificationChanged()
+    private async void OnNotificationReceived()
     {
         await UpdateNotificationsAsync();
         await InvokeAsync(StateHasChanged);
@@ -199,7 +198,7 @@
 
     public void Dispose()
     {
-        NotificationStorage.OnChanged -= OnNotificationChanged;
+        NotificationStorage.OnReceived -= OnNotificationReceived;
     }
 
     string GetColor(string type)

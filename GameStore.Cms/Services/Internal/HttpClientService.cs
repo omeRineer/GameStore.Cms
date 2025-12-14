@@ -2,6 +2,7 @@
 using GameStore.Cms.Extensions;
 using Radzen;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -12,24 +13,22 @@ namespace GameStore.Cms.Services.Internal
         readonly Event @event;
         readonly CurrentUserService CurrentUserService;
         readonly ISyncLocalStorageService LocalStorageService;
-        readonly HttpClient _httpClient;
-        readonly NotificationService NotificationService;
+        readonly NotificationService RadzenNotificationService;
 
-        public HttpClientService(HttpClient httpClient, ISyncLocalStorageService localStorageService, CurrentUserService currentUserService, NotificationService notificationService, Event @event)
+        public HttpClientService(ISyncLocalStorageService localStorageService, CurrentUserService currentUserService, NotificationService radzenNotificationService, Event @event)
         {
-            _httpClient = httpClient;
             LocalStorageService = localStorageService;
             CurrentUserService = currentUserService;
-            NotificationService = notificationService;
+            RadzenNotificationService = radzenNotificationService;
 
-
-            SetHttpClientDefaultParameters("Bearer");
             this.@event = @event;
         }
 
-        public async Task<TModel> GetAsync<TModel>(string url)
+        public async Task<TModel> GetAsync<TModel>(string url, Dictionary<string, object> headers = null)
         {
-            var response = await _httpClient.GetAsync(url);
+            var client = CreateClient(headers);
+
+            var response = await client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
                 await Notify(response);
@@ -37,9 +36,11 @@ namespace GameStore.Cms.Services.Internal
             return await response.Content.ReadFromJsonAsync<TModel>();
         }
 
-        public async Task<TModel> PostAsync<TModel>(string url, object data)
+        public async Task<TModel> PostAsync<TModel>(string url, object data, Dictionary<string, object> headers = null)
         {
-            var response = await _httpClient.PostAsJsonAsync(url, data);
+            var client = CreateClient(headers);
+
+            var response = await client.PostAsJsonAsync(url, data);
 
             if (!response.IsSuccessStatusCode)
                 await Notify(response);
@@ -47,9 +48,11 @@ namespace GameStore.Cms.Services.Internal
             return await response.Content.ReadFromJsonAsync<TModel>();
         }
 
-        public async Task<TModel> DeleteAsync<TModel>(string url)
+        public async Task<TModel> DeleteAsync<TModel>(string url, Dictionary<string, object> headers = null)
         {
-            var response = await _httpClient.DeleteAsync(url);
+            var client = CreateClient(headers);
+
+            var response = await client.DeleteAsync(url);
 
             if (!response.IsSuccessStatusCode)
                 await Notify(response);
@@ -61,15 +64,23 @@ namespace GameStore.Cms.Services.Internal
         {
             var message = await response.Content.ReadAsStringAsync();
 
-            NotificationService.Error($"{(int)response.StatusCode} {response.StatusCode.ToString()}", message);
+            RadzenNotificationService.Error($"{(int)response.StatusCode} {response.StatusCode.ToString()}", message);
 
         }
-        void SetHttpClientDefaultParameters(string scheme)
+
+        HttpClient CreateClient(Dictionary<string, object> headers = null)
         {
+            var client = new HttpClient();
+
             var token = LocalStorageService.GetItem<string>("AUTH_TOKEN");
 
             if (!string.IsNullOrEmpty(token))
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme, token);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            foreach (var header in headers)
+                client.DefaultRequestHeaders.Add(header.Key, header.Value.ToString());
+
+            return client;
         }
     }
 }

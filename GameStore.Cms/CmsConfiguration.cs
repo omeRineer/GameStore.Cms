@@ -20,6 +20,7 @@ namespace GameStore.Cms
         }
 
         public static APIOptions APIOptions { get => Settings.APIOptions; }
+        public static FluxifyOptions FluxifyOptions { get => Settings.FluxifyOptions; }
         public static HostEnvironment HostEnvironment { get => Settings.HostEnvironment; }
 
     }

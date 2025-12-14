@@ -8,6 +8,6 @@ namespace GameStore.Cms.Models.Enums
 {
     public class ClaimTypes
     {
-        public const string NotificationApiKey = "Notification-Api-Key";
+        public const string FluxifyApiKey = "Fluxify-Api-Key";
     }
 }

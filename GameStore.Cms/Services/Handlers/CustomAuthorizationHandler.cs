@@ -11,8 +11,7 @@ namespace GameStore.Cms.Services.Handlers
         public CustomAuthorizationRequirement(string requirements)
         {
             Claims = new string[] { "SuperAdmin" }
-                                .Concat(requirements
-                                .Split(','))
+                                .Concat(requirements.Split(','))
                                 .ToArray();
         }
     }

@@ -17,7 +17,7 @@ namespace GameStore.Cms.Models.SignalR
         public string? Content { get; set; }
         public bool IsRead { get; set; }
         public DateTime CreateDate { get; set; }
-
+        public List<string>? Topics { get; set; }
         public Dictionary<string, object>? Custom { get; set; }
     }
 }
