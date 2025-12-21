@@ -1,0 +1,31 @@
+﻿
+@if (Hub == null || Hub.State == HubConnectionState.Disconnected)
+{
+   <div class="ws-error">
+       <div class="ws-icon">🔌</div>
+
+       <h2>Bağlantı Kurulamadı</h2>
+
+       <p>
+           Sunucuya ulaşılamıyor.
+           Gerçek zamanlı bağlantı şu anda aktif değil.
+       </p>
+
+       <button class="ws-retry" onclick="window.location.reload()">
+           Tekrar Dene
+       </button>
+   </div>
+}
+else
+{
+    @ChildContent
+}
+
+
+
+@code {
+
+    [Parameter] public HubConnection? Hub { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

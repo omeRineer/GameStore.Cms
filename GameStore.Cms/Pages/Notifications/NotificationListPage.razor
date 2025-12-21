@@ -169,23 +169,23 @@
         switch (Tab)
         {
             case "all":
-                Notifications = NotificationStorage.Notifications.ToList();
+                Notifications = NotificationStorage.Items.ToList();
                 break;
 
             case "system":
-                Notifications = NotificationStorage.Notifications.Where(f => f.Topics?.Contains("notification_system") == true).ToList();
+                Notifications = NotificationStorage.Items.Where(f => f.Topics?.Contains("notification_system") == true).ToList();
                 break;
 
             case "sent":
-                Notifications = NotificationStorage.Notifications.Where(f => f.Sender == CurrentUser.Id.ToString()).ToList();
+                Notifications = NotificationStorage.Items.Where(f => f.Sender == CurrentUser.Id.ToString()).ToList();
                 break;
 
             case "unreads":
-                Notifications = NotificationStorage.Notifications.Where(f => !f.IsRead).ToList();
+                Notifications = NotificationStorage.Items.Where(f => !f.IsRead).ToList();
                 break;
 
             default:
-                Notifications = NotificationStorage.Notifications.ToList();
+                Notifications = NotificationStorage.Items.ToList();
                 break;
         }
     }

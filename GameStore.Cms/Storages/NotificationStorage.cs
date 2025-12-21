@@ -9,9 +9,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace GameStore.Cms.Storages
 {
-    public class NotificationStorage
+    public class NotificationStorage : HubStorage<NotificationModel>
     {
-        public HubConnection? Hub { get; private set; }
         readonly CurrentUserService CurrentUserService;
         readonly HubConnectionProvider HubConnectionProvider;
         readonly NotificationService NotificationService;
@@ -23,19 +22,14 @@ namespace GameStore.Cms.Storages
             CurrentUserService = currentUserService;
 
             currentUserService.OnLogout += Clear;
-            
+
         }
-        List<NotificationModel> _notifications { get; set; } = new();
-        public IReadOnlyList<NotificationModel> Notifications
-            => _notifications.AsReadOnly();
-        public event Action? OnReceived;
 
-
-        public async Task ConnectAsync()
+        public override async Task ConnectAsync()
         {
             await LoadAsync();
 
-            if(Hub is not null)
+            if (Hub is not null)
                 return;
 
             var User = await CurrentUserService.GetCurrentUserAsync();
@@ -64,22 +58,15 @@ namespace GameStore.Cms.Storages
                                                                      }, new() { { ClaimTypes.FluxifyApiKey, User.Claims[ClaimTypes.FluxifyApiKey] } });
 
             await Hub.StartAsync();
+
+            StateChanged();
         }
 
-        public async Task DisconnectAsync()
-        {
-            if (Hub is not null)
-            {
-                await Hub.StopAsync();
-                Hub = null;
-                Clear();
-            }
-        }
         public void Add(NotificationModel notification)
         {
-            _notifications.Add(notification);
+            _items.Add(notification);
 
-            OnReceived?.Invoke();
+            StateChanged();
         }
 
         public async Task LoadAsync()
@@ -87,22 +74,10 @@ namespace GameStore.Cms.Storages
             var result = await NotificationService.GetListAsync<GetNotificationsModel>();
 
             if (result.Success)
-                _notifications = result?.Data?.Notifications ?? new();
+                _items = result?.Data?.Notifications ?? new();
 
 
-            OnReceived?.Invoke();
-        }
-
-        public void ForceChanged()
-        {
-            OnReceived?.Invoke();
-        }
-
-        public void Clear()
-        {
-            _notifications.Clear();
-
-            OnReceived?.Invoke();
+            StateChanged();
         }
     }
 }

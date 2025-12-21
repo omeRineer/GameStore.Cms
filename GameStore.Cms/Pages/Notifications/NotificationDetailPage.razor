@@ -6,9 +6,9 @@
     <Loading IsLoading="IsLoading">
         @if (NotificationDetailModel != null)
         {
-            <p>
+            <div>
                 @((MarkupString) NotificationDetailModel.Content)
-            </p>
+            </div>
         }
     </Loading>
 </AuthorizeArea>
@@ -17,7 +17,6 @@
     [Parameter] public NotificationModel Notification { get; set; }
 
     private GetNotificationDetailModel? NotificationDetailModel;
-    private bool IsLoading { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -32,7 +31,7 @@
 
         IsLoading = false;
 
-        NotificationStorage.ForceChanged();
+        NotificationStorage.StateChanged();
     }
 
 }

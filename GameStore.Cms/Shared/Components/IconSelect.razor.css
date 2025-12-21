@@ -1,0 +1,25 @@
+﻿.icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.icon-box {
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+    .icon-box:hover {
+        background-color: #f5f5f5;
+    }
+
+    .icon-box.selected {
+        border: 2px solid #007bff;
+        background-color: #e7f1ff;
+    }

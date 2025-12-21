@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using GameStore.Cms.Models.Domain.Core;
+using GameStore.Cms.Models.Domain.Meta;
 using GameStore.Cms.Models.Enums;
 using GameStore.Cms.Models.Inputs;
 using GameStore.Cms.Models.Rest.Blog;
@@ -32,6 +33,7 @@ namespace GameStore.Cms.Extensions
         {
 
             services.AddScoped<NotificationService>();
+            services.AddScoped<SubscriberService>();
             services.AddScoped<Event>();
 
             services.AddScoped<CategoryService>();
@@ -68,7 +70,8 @@ namespace GameStore.Cms.Extensions
 
         public static void AddStorages(this IServiceCollection services)
         {
-            services.AddScoped<NotificationStorage>();
+            services.AddScoped<HubStorage<NotificationModel>, NotificationStorage>();
+            services.AddScoped<HubStorage<SubscriberModel>, SubscriberStateStorage>();
         }
 
         public static void AddUtilities(this IServiceCollection services)

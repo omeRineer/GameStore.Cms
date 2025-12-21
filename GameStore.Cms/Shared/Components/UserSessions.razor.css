@@ -1,0 +1,41 @@
+﻿.online-users-card {
+    height: 100%;
+}
+
+.online-users-list {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.user-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .user-item:hover {
+        background-color: #f8f9fa;
+    }
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+    .status-dot.online {
+        background-color: #28a745;
+    }
+
+    .status-dot.offline {
+        background-color: #adb5bd;
+    }

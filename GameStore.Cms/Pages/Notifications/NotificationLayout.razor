@@ -4,16 +4,16 @@
 @implements IDisposable
 
 
-<NotConnection Condition="NotificationStorage.Hub == null || NotificationStorage.Hub.State == HubConnectionState.Disconnected">
+<HubState Hub="NotificationStorage.Hub">
     <div class="notification-layout">
         <aside class="notification-menu shadow-sm rounded-3">
             <ul>
                 <li>
                     <NavLink href="/notifications/all" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
                         <span>📬 Tümü</span>
-                        @if (NotificationStorage.Notifications.Any(f => !f.IsRead))
+                        @if (NotificationStorage.Items.Any(f => !f.IsRead))
                         {
-                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => !c.IsRead)</span>
+                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Items.Count(c => !c.IsRead)</span>
                         }
                     </NavLink>
                 </li>
@@ -25,9 +25,9 @@
                 <li>
                     <NavLink href="/notifications/system" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
                         <span>⚙️ Sistem Mesajları</span>
-                        @if (NotificationStorage.Notifications.Any(f => f.Topics?.Contains("notification_system") == true && !f.IsRead))
+                        @if (NotificationStorage.Items.Any(f => f.Topics?.Contains("notification_system") == true && !f.IsRead))
                         {
-                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => c.Topics?.Contains("notification_system") == true && !c.IsRead)</span>
+                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Items.Count(c => c.Topics?.Contains("notification_system") == true && !c.IsRead)</span>
                         }
 
                     </NavLink>
@@ -35,9 +35,9 @@
                 <li>
                     <NavLink href="/notifications/unreads" ActiveClass="active" class="menu-item d-flex justify-content-between align-items-center">
                         <span>🔴 Okunmayanlar</span>
-                        @if (NotificationStorage.Notifications.Any(f => !f.IsRead))
+                        @if (NotificationStorage.Items.Any(f => !f.IsRead))
                         {
-                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Notifications.Count(c => !c.IsRead)</span>
+                            <span class="badge bg-danger rounded-pill">@NotificationStorage.Items.Count(c => !c.IsRead)</span>
                         }
 
                     </NavLink>
@@ -111,14 +111,14 @@
             height: 100%;
         }
     </style>
-</NotConnection>
+</HubState>
 
 @code {
 
     protected override async Task OnInitializedAsync()
     {
-        await NotificationStorage.ConnectAsync();
         NotificationStorage.OnReceived += OnNotificationReceived;
+        await NotificationStorage.ConnectAsync();
     }
 
     async void OnNotificationReceived()
@@ -126,8 +126,9 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    public void Dispose()
+    public async void Dispose()
     {
+        await NotificationStorage.DisconnectAsync();
         NotificationStorage.OnReceived -= OnNotificationReceived;
     }
 

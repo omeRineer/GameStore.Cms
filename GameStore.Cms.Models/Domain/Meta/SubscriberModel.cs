@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GameStore.Cms.Models.Domain.Meta
+{
+    public class SubscriberModel
+    {
+        public Guid Id { get; set; }
+        public Guid NameSpace { get; set; }
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public bool IsConnected { get; set; }
+    }
+}

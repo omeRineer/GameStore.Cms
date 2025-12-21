@@ -28,13 +28,13 @@
                         </RadzenStack>
                     </RadzenCard>
 
-                    @if (NotificationHub != null)
+                    @if (NotificationStorage.Hub != null)
                     {
                         <RadzenCard Variant="@Variant.Filled" class="mb-1">
                             <div class="row">
                                 <div class="d-flex justify-content-between">
                                     <RadzenLabel Text="Canlı Bildirimleri Aç / Kapat" />
-                                    <RadzenSwitch Value="NotificationHub.State == HubConnectionState.Connected" Disabled="@IsLoading" Change=@(async args => await ConnectAsync()) />
+                                    <RadzenSwitch Value="NotificationStorage.Hub?.State == HubConnectionState.Connected" Disabled="@IsLoading" Change=@(async args => await ConnectAsync()) />
                                 </div>
                             </div>
                         </RadzenCard>
@@ -120,7 +120,6 @@
 </Loading>
 
 @code {
-    HubConnection? NotificationHub;
     UpdateProfileModel profileModel;
     bool IsLoading = false;
 
@@ -136,8 +135,6 @@
             return;
         }
 
-        NotificationHub = HubConnectionProvider.GetSingleOrDefault("notification");
-
         profileModel = Mapper.Map<UpdateProfileModel>(result.Data);
 
         IsLoading = false;
@@ -148,13 +145,12 @@
     {
         IsLoading = true;
 
-        if (NotificationHub.State != HubConnectionState.Connected)
+        if (NotificationStorage.Hub?.State != HubConnectionState.Connected)
         {
-            await NotificationHub.StartAsync();
-            await NotificationStorage.LoadAsync();
+            await NotificationStorage.ConnectAsync();
         }
         else
-            await NotificationHub.StopAsync();
+            await NotificationStorage.DisconnectAsync();
 
         IsLoading = false;
     }

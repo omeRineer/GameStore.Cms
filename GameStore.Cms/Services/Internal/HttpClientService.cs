@@ -77,8 +77,9 @@ namespace GameStore.Cms.Services.Internal
             if (!string.IsNullOrEmpty(token))
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            foreach (var header in headers)
-                client.DefaultRequestHeaders.Add(header.Key, header.Value.ToString());
+            if (headers != null && headers.Count > 0)
+                foreach (var header in headers)
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value.ToString());
 
             return client;
         }

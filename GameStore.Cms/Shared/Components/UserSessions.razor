@@ -1,0 +1,89 @@
+﻿
+
+<div class="card shadow-sm online-users-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0">Kullanıcılar</h6>
+        @if (!IsLoading && (SubscriberStateStorage.Hub == null || SubscriberStateStorage.Hub.State == HubConnectionState.Disconnected))
+        {
+            <span @onclick="async c=>await ChangeConnectionAsync(true)" style="cursor:pointer" class="badge bg-danger">Offline</span>
+        }
+        else if (!IsLoading && SubscriberStateStorage.Hub?.State == HubConnectionState.Connected)
+        {
+            <span @onclick="async c=>await ChangeConnectionAsync(false)" style="cursor:pointer" class="badge bg-success">Online</span>
+        }
+        else
+        {
+            <span class="badge bg-secondary">Bağlanıyor...</span>
+        }
+    </div>
+
+    <div class="card-body p-0">
+        <Loading IsLoading="IsLoading">
+            <HubState Hub="SubscriberStateStorage.Hub">
+                <ul class="list-group list-group-flush online-users-list">
+
+                    @foreach (var user in SubscriberStateStorage.Items.OrderByDescending(o => o.IsConnected))
+                    {
+                        <li class="list-group-item user-item d-flex align-items-center">
+                            <div class="position-relative">
+                                <img src="https://i.pravatar.cc/40?img=1" class="rounded-circle user-avatar">
+                                <span class="status-dot @(user.IsConnected ? "online" : "offline")"></span>
+                            </div>
+
+                            <div class="ms-3 flex-grow-1">
+                                <div class="fw-semibold">@user.Name</div>
+                                <small class="text-muted">@(user.IsConnected ? "Online" : "Offline")</small>
+                            </div>
+
+                            <small class="text-muted">12:45</small>
+                        </li>
+                    }
+
+                </ul>
+            </HubState>
+        </Loading>
+    </div>
+</div>
+
+@code {
+    bool IsLoading = false;
+    CurrentUser? CurrentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        CurrentUser = await CurrentUserService.GetCurrentUserAsync();
+
+        if (CurrentUser.IsAuthenticated && (CurrentUser.Claims != null && CurrentUser.Claims.ContainsKey(ClaimTypes.FluxifyApiKey)))
+        {
+            SubscriberStateStorage.OnReceived += OnSubscriberReceived;
+            await SubscriberStateStorage.ConnectAsync();
+        }
+
+        IsLoading = false;
+    }
+
+    private async void OnSubscriberReceived()
+    {
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    private async Task ChangeConnectionAsync(bool isConnected)
+    {
+        IsLoading = true;
+
+        if (isConnected)
+            await SubscriberStateStorage.ConnectAsync();
+        else
+            await SubscriberStateStorage.DisconnectAsync();
+
+        IsLoading = false;
+    }
+
+    public void Dispose()
+    {
+        SubscriberStateStorage.OnReceived -= OnSubscriberReceived;
+    }
+}

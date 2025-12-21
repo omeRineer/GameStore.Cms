@@ -8,9 +8,12 @@
 @inject IJSRuntime JSRuntime
 @inject ILocalStorageService LocalStorageService
 @inject CurrentUserService CurrentUserService
-@inject NotificationStorage NotificationStorage
 @inject HubConnectionProvider HubConnectionProvider
 @inject Event Event
+
+
+@inject HubStorage<NotificationModel> NotificationStorage
+@inject HubStorage<SubscriberModel> SubscriberStateStorage
 
 @using Microsoft.AspNetCore.SignalR.Client
 @using Extensions

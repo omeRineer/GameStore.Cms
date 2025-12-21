@@ -1,0 +1,28 @@
+﻿.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #666;
+    opacity: 0.9;
+}
+
+.icon {
+    font-size: 80px;
+    color: #cc0000;
+    margin-bottom: 20px;
+}
+
+.no-data-container h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.no-data-container p {
+    font-size: 18px;
+    color: #777;
+}
