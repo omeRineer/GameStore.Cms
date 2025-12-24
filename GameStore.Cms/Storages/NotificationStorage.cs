@@ -57,9 +57,12 @@ namespace GameStore.Cms.Storages
                                                                                      }
                                                                      }, new() { { ClaimTypes.FluxifyApiKey, User.Claims[ClaimTypes.FluxifyApiKey] } });
 
-            await Hub.StartAsync();
-
-            StateChanged();
+            if (Hub is not null)
+            {
+                await Hub.StartAsync();
+                StateChanged();
+            }
+            
         }
 
         public void Add(NotificationModel notification)

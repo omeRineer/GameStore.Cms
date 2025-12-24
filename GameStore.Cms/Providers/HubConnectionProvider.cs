@@ -6,7 +6,7 @@ namespace GameStore.Cms.Providers
     public class HubConnectionProvider
     {
         Dictionary<string, HubConnection> Connections { get; } = new();
-        public HubConnection GetOrCreateConnection<TMessage>(string hub,
+        public HubConnection? GetOrCreateConnection<TMessage>(string hub,
                                                         Dictionary<string, Action<TMessage>> events,
                                                         Dictionary<string, string> queryParams = null)
         {
